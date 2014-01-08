@@ -1,0 +1,5 @@
+rm MANIFEST
+perl Build.PL
+./Build manifest
+./Build test
+./Build dist
