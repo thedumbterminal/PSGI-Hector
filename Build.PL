@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Module::Build;
 my $build = Module::Build->new(
-	module_name => 'CGI::Mungo',
+	module_name => 'PSGI::Hector',
 	license => 'perl',
 	dist_author => 'MacGyveR <dumb@cpan.org>',
 	dist_abstract => 'Very simple CGI web framework',

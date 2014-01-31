@@ -1,11 +1,11 @@
 #request object
-package CGI::Mungo::Request;
+package PSGI::Hector::Request;
 
 =pod
 
 =head1 NAME
 
-CGI::Mungo::Request - Form request class
+PSGI::Hector::Request - Form request class
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ use Data::Dumper;
 
 =head2 new()
 
-	my $r = CGI::Mungo::Request->new();
+	my $r = PSGI::Hector::Request->new();
 
 Constructor, gets all the GET/POST information from the browser request.
 

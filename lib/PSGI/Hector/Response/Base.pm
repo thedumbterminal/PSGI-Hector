@@ -1,5 +1,5 @@
 #response base object for plugins
-package CGI::Mungo::Response::Base;
+package PSGI::Hector::Response::Base;
 
 =pod
 
@@ -13,7 +13,7 @@ Response Base - Base object for view plugins
 	my $response = myResponse->new($mungo);
 	
 	package myResponse;
-	use base ("CGI::Mungo::Response::Base");
+	use base ("PSGI::Hector::Response::Base");
 
 =head1 DESCRIPTION
 
@@ -21,7 +21,7 @@ This object should not be used directly, a new class should be created which inh
 
 All response plugins should override at least the display() method and they all a sub class of L<HTTP::Response>.
 
-The module L<CGI::Mungo::Response> will load the specified response plugin on script startup.
+The module L<PSGI::Hector::Response> will load the specified response plugin on script startup.
 
 =head1 METHODS
 
@@ -30,7 +30,7 @@ The module L<CGI::Mungo::Response> will load the specified response plugin on sc
 use strict;
 use warnings;
 use Carp;
-use base qw(HTTP::Response CGI::Mungo::Base CGI::Mungo::Log);
+use base qw(HTTP::Response PSGI::Hector::Base PSGI::Hector::Log);
 #########################################################
 sub new{
 	my($class, $mungo) = @_;
@@ -95,11 +95,11 @@ In this package there are some responses already available for use:
 
 =item Raw
 
-See L<CGI::Mungo::Response::Raw> for details.
+See L<PSGI::Hector::Response::Raw> for details.
 
 =item SimpleTemplate
 
-See L<CGI::Mungo::Response::SimpleTemplate> for details.
+See L<PSGI::Hector::Response::SimpleTemplate> for details.
 
 =back
 

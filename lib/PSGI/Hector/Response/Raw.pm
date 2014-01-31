@@ -1,5 +1,5 @@
 #response object
-package CGI::Mungo::Response::Raw;
+package PSGI::Hector::Response::Raw;
 
 =pod
 
@@ -24,7 +24,7 @@ Content is displayed at the end of the page request.
 
 use strict;
 use warnings;
-use base ("CGI::Mungo::Response::Base");
+use base ("PSGI::Hector::Response::Base");
 #########################################################
 sub new{
 	my($class, $mungo) = @_;

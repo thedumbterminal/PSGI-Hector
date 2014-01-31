@@ -3,8 +3,8 @@ use warnings;
 use Test::More;
 plan(tests => 5);
 use lib qw(../lib lib);
-use CGI::Mungo;
-use CGI::Mungo::Response::Raw;
+use PSGI::Hector;
+use PSGI::Hector::Response::Raw;
 
 #setup our cgi environment
 $ENV{'SCRIPT_NAME'} = "test.cgi";
@@ -14,10 +14,10 @@ $ENV{'HTTP_REFERER'} = "http://" . $ENV{'HTTP_HOST'};
 $ENV{'REQUEST_METHOD'} = 'GET';
 
 my $options = {
-	'responsePlugin' => 'CGI::Mungo::Response::Raw'
+	'responsePlugin' => 'PSGI::Hector::Response::Raw'
 };
 
-my $m = CGI::Mungo->new($options);
+my $m = PSGI::Hector->new($options);
 
 my $raw = $m->getResponse();
 

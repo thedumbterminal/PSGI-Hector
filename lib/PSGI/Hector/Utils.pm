@@ -1,9 +1,9 @@
-package CGI::Mungo::Utils;
+package PSGI::Hector::Utils;
 =pod
 
 =head1 NAME
 
-CGI::Mungo::Utils - Helper methods
+PSGI::Hector::Utils - Helper methods
 
 =head1 SYNOPSIS
 

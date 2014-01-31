@@ -1,12 +1,12 @@
 #Session functions
 #mt	20070113	cookies should now expire
-package CGI::Mungo::Session;
+package PSGI::Hector::Session;
 
 =pod
 
 =head1 NAME
 
-CGI::Mungo::Session - Session class
+PSGI::Hector::Session - Session class
 
 =head1 SYNOPSIS
 
@@ -28,7 +28,7 @@ use Digest::MD5;
 use Data::Dumper;
 use CGI::Simple::Cookie;
 use File::Spec;
-use base qw(CGI::Mungo::Base CGI::Mungo::Log);
+use base qw(PSGI::Hector::Base PSGI::Hector::Log);
 our $prefix = "MG";
 our $path = "/tmp";
 ##############################################################################################################################
@@ -125,7 +125,7 @@ Creates a new session for the visitor.
 
 This saves the contents of the given hash reference into the session.
 
-The correct Set-Cookie header will be issued through the provided L<CGI::Mungo::Response> object.
+The correct Set-Cookie header will be issued through the provided L<PSGI::Hector::Response> object.
 
 =cut
 

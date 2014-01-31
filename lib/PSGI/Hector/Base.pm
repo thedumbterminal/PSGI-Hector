@@ -1,10 +1,10 @@
-package CGI::Mungo::Base;
+package PSGI::Hector::Base;
 
 =pod
 
 =head1 NAME
 
-CGI::Mungo::Base - Base Mungo class
+PSGI::Hector::Base - Base Mungo class
 
 =head1 SYNOPSIS
 
@@ -13,7 +13,7 @@ CGI::Mungo::Base - Base Mungo class
 
 =head1 DESCRIPTION
 
-Abstract class used in all other CGI::Mungo classes.
+Abstract class used in all other PSGI::Hector classes.
 
 =head1 METHODS
 

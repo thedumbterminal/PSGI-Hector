@@ -1,11 +1,11 @@
 #factory response object
-package CGI::Mungo::Response;
+package PSGI::Hector::Response;
 
 =pod
 
 =head1 NAME
 
-CGI::Mungo::Response - Page response class
+PSGI::Hector::Response - Page response class
 
 =head1 SYNOPSIS
 
@@ -28,7 +28,7 @@ use Carp;
 
 Constructor, a factory method that will return an instance of the requested response plugin.
 
-If the response is not modified from the client's provided Etag header an instance of <LCGI::Mungo::Response::NotModified>
+If the response is not modified from the client's provided Etag header an instance of <LPSGI::Hector::Response::NotModified>
 will be returned instead.
 
 =cut

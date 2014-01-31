@@ -1,5 +1,5 @@
 #response object
-package CGI::Mungo::Response::NotModified;
+package PSGI::Hector::Response::NotModified;
 
 =pod
 
@@ -13,7 +13,7 @@ Response NotModified - View plugin to return a 304 Response
 
 =head1 DESCRIPTION
 
-This view plugin is automatically used by L<CGI::Mungo::Response> when the request Etag matches the current request, eg, the client
+This view plugin is automatically used by L<PSGI::Hector::Response> when the request Etag matches the current request, eg, the client
 has a copy of the page already.
 
 =head1 METHODS
@@ -23,7 +23,7 @@ has a copy of the page already.
 use strict;
 use warnings;
 use Carp;
-use base qw(CGI::Mungo::Response::Base);
+use base qw(PSGI::Hector::Response::Base);
 #########################################################
 
 =head2 new($mungo)

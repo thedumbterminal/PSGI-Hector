@@ -1,7 +1,7 @@
-package CGI::Mungo::Log;
+package PSGI::Hector::Log;
 use strict;
 use warnings;
-use base qw(CGI::Mungo::Utils);
+use base qw(PSGI::Hector::Utils);
 ###########################################################
 sub log{	#a simple way to log a message to the apache error log
 	my($self, $message) = @_;

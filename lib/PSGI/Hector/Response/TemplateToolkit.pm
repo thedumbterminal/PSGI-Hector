@@ -1,5 +1,5 @@
 #response object
-package CGI::Mungo::Response::TemplateToolkit;
+package PSGI::Hector::Response::TemplateToolkit;
 
 =pod
 
@@ -28,7 +28,7 @@ use File::Basename;
 use File::Spec;
 use Template;
 use Carp;
-use base qw(CGI::Mungo::Response::Base);
+use base qw(PSGI::Hector::Response::Base);
 our $templateLoc = "root/templates";	#where the templates are stored
 #########################################################
 
@@ -251,7 +251,7 @@ Please make sure you have this file, there is an example of this in the "root/te
 
 To change the template location use the following code at the top of your script:
 
-	$CGI::Mungo::Response::SimpleTemplate::templateLoc = "../root";
+	$PSGI::Hector::Response::SimpleTemplate::templateLoc = "../root";
 
 =head1 Sess also
 

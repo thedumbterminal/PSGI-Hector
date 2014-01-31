@@ -1,11 +1,11 @@
 #main framework object
-package CGI::Mungo;
+package PSGI::Hector;
 
 =pod
 
 =head1 NAME
 
-CGI::Mungo - Very simple CGI web framework
+PSGI::Hector - Very simple CGI web framework
 
 =head1 SYNOPSIS
 
@@ -16,14 +16,14 @@ CGI::Mungo - Very simple CGI web framework
 	$m->run();	#do this thing!
 	###########################
 	package App;
-	use base qw(CGI::Mungo);
+	use base qw(PSGI::Hector);
 	sub handleDefault{
 		#add code here for landing page
 	}
 
 =head1 DESCRIPTION
 
-All action subs are passed a L<CGI::Mungo> object as the only parameter, from this you should be able to reach
+All action subs are passed a L<PSGI::Hector> object as the only parameter, from this you should be able to reach
 everything you need.
 
 =head1 METHODS
@@ -35,10 +35,10 @@ use warnings;
 use Carp;
 use File::Basename;
 use Class::Load qw(is_class_loaded);
-use base qw(CGI::Mungo::Base CGI::Mungo::Utils CGI::Mungo::Log);
-use CGI::Mungo::Response;
-use CGI::Mungo::Session;	#for session management
-use CGI::Mungo::Request;
+use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
+use PSGI::Hector::Response;
+use PSGI::Hector::Session;	#for session management
+use PSGI::Hector::Request;
 our $VERSION = "1.9";
 #########################################################
 
@@ -52,7 +52,7 @@ our $VERSION = "1.9";
 		'SefUrls' => 0,
 		'debug' => 1
 	};
-	my $m = CGI::Mungo->new($options);
+	my $m = PSGI::Hector->new($options);
 
 Constructor, requires a hash references to be passed as the only argument. This hash reference contains any general
 options for the framework.
@@ -78,7 +78,7 @@ sub new{
 			$self->_setOption("debug", 0);
 		}
 		$self->{'_request'} = $requestClass->new();
-		$self->{'_response'} = CGI::Mungo::Response->new($self, $self->getOption('responsePlugin'));	#this could need access to a request object	
+		$self->{'_response'} = PSGI::Hector::Response->new($self, $self->getOption('responsePlugin'));	#this could need access to a request object	
 		$self->{'_env'} = $env;
 		$self->_init();	#perform initial setup
 		return $self;
@@ -97,7 +97,7 @@ sub new{
 	my $response = $m->getResponse();
 
 Returns an instance of the response plugin object, previously defined in the constructor options.
-See L<CGI::Mungo::Response> for more details.
+See L<PSGI::Hector::Response> for more details.
 
 =cut
 
@@ -114,7 +114,7 @@ sub getResponse{
 
 	my $session = $m->getSession();
 
-Returns an instance of the L<CGI::Mungo::Session> object.
+Returns an instance of the L<PSGI::Hector::Session> object.
 
 =cut
 
@@ -131,7 +131,7 @@ sub getSession{
 
 	my $request = $m->getRequest();
 
-Returns an instance of the L<CGI::Mungo::Request> object.
+Returns an instance of the L<PSGI::Hector::Request> object.
 
 =cut
 
@@ -421,7 +421,7 @@ configuration options.
 
 A scalar string consisting of the response class to use.
 
-See L<CGI::Mungo::Response::Base> for details on how to create your own response class, or
+See L<PSGI::Hector::Response::Base> for details on how to create your own response class, or
 a list of response classes provided in this package.
 
 =head3 checkReferer
@@ -463,11 +463,11 @@ A boolean value indicating if debug mode is enabled. This can then be used in ou
 
 To change the session prefix characters use the following code at the top of your script:
 
-	$CGI::Mungo::Session::prefix = "ABC";
+	$PSGI::Hector::Session::prefix = "ABC";
 	
 To change the session file save path use the following code at the top of your script:
 
-	$CGI::Mungo::Session::path = "/var/tmp";
+	$PSGI::Hector::Session::path = "/var/tmp";
 
 =head1 Author
 
