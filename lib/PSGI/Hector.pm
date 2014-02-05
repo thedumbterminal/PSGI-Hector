@@ -77,7 +77,7 @@ sub new{
 		if(!defined($self->getOption('debug'))){	#turn off debugging by default
 			$self->_setOption("debug", 0);
 		}
-		$self->{'_request'} = $requestClass->new();
+		$self->{'_request'} = $requestClass->new($env);
 		$self->{'_response'} = PSGI::Hector::Response->new($self, $self->getOption('responsePlugin'));	#this could need access to a request object	
 		$self->{'_env'} = $env;
 		$self->_init();	#perform initial setup

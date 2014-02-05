@@ -9,20 +9,17 @@ my $build = Module::Build->new(
 	requires => {
 		"CGI::Simple::Cookie" => 0,
 		"HTTP::Response" => 0,
-		"CGI::PSGI" => 0,
+		"Plack" => 0,
 		"Carp" => 0,
 		"File::Basename" => 0,
 		"Data::Dumper" => 0,
 		"Template" => 0,
 		"File::Spec" => 0,
 		"Class::Load" => 0,
-		"File::Basename" => 0
 	},
 	build_requires => {
 		"Test::More" => 0,
-		"HTTP::Daemon" => 0,
-		"HTTP::Status" => 0,
-		"HTTP::Response" => 0,
+		"HTTP::Status" => 0
 	},
 	create_makefile_pl => 'traditional'
 );

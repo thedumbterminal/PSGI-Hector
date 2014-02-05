@@ -22,30 +22,9 @@ Class to deal with the current page request
 
 use strict;
 use warnings;
-use CGI::PSGI;
 use Carp;
 use Data::Dumper;
-#########################################################
-
-=head2 new()
-
-	my $r = PSGI::Hector::Request->new();
-
-Constructor, gets all the GET/POST information from the browser request.
-
-=cut
-
-##########################################
-sub new{
-	my $class = shift;
-	my $self = {
-		'_parameters' => {},
-		'__cgi' => undef
-	};
-	bless $self, $class;
-	$self->_setParameters();
-	return $self;
-}
+use base qw(Plack::Request);
 #########################################################
 
 =pod
@@ -61,7 +40,7 @@ Returns a hash reference of all the GET/POST values from the current request.
 ##########################################
 sub getParameters{	#get POST or GET data
 	my $self = shift;
-	return $self->{'_parameters'};
+	return $self->parameters()->as_hashref();
 }
 #########################################################
 
@@ -114,7 +93,7 @@ sub validate{	#checks %form againist the hash rules
 
 =pod
 
-=head2 getheader($header)
+=head2 getHeader($header)
 
 	$request->getHeader($name)
 
@@ -132,24 +111,6 @@ sub getHeader{
 		$value = $ENV{'HTTP_' . $name};
 	}
 	return $value;
-}
-#########################################
-sub _setParameters{
-	my $self = shift;
-	my $cgi = $self->__getCgi();   
-	foreach my $param ($cgi->param()){
-		my $value = $cgi->param($param);
-		$self->{'_parameters'}->{$param} = $value;  #save
-	}
-	return 1;
-}
-################ss###########################################
-sub __getCgi{
-	my $self = shift;
-	if(!$self->{'__cgi'}){
-		$self->{'__cgi'} = CGI::PSGI->new();	#create a new cgi object
-	}
-	return $self->{'__cgi'};
 }
 ####################################################
 sub __stringfy{
@@ -172,7 +133,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2011 MacGyveR. All rights reserved.
+Copyright (c) 2014 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

@@ -47,7 +47,7 @@ sub new{
 	$self->{'_templateVars'} = {};
 	bless $self, $class;
 	$self->setTemplateVar("env", \%ENV);	#include this var by default
-	$self->setTemplateVar("mungo", $mungo);        #this will be handy to have too
+	$self->setTemplateVar("hector", $mungo);        #this will be handy to have too
 	$self->setTemplateVar("action", $mungo->getAction());        #this will be handy to have too
 	$self->setTemplateVar("debug", $mungo->getOption("debug"));
 	return $self;
@@ -232,8 +232,8 @@ sub _getTemplatePath{
 	my $mungo = $self->getMungo();
 	my $env = $mungo->getEnv();
 	my @dirs;
-	if($env->{'REQUEST_URI'} ne "/"){
-        my $currentDir = dirname($env->{'REQUEST_URI'});
+	if($env->{'PATH_INFO'} ne "/"){
+        my $currentDir = dirname($env->{'PATH_INFO'});
         @dirs = File::Spec->splitdir($currentDir);
         shift(@dirs);
         @dirs = map("..", @dirs);
