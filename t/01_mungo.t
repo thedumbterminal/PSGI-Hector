@@ -1,25 +1,26 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 7);
+plan(tests => 8);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
 #setup our cgi environment
-$ENV{'SCRIPT_NAME'} = "test.cgi";
-$ENV{'SERVER_NAME'} = "www.test.com";
-$ENV{'HTTP_HOST'} = "www.test.com";
-$ENV{'HTTP_REFERER'} = "http://" . $ENV{'HTTP_HOST'};
-$ENV{'SERVER_PORT'} = 8080;
-$ENV{'REQUEST_URI'} = "/test.cgi";
-$ENV{'REQUEST_METHOD'} = 'GET';
+my %env;
+$env{'SCRIPT_NAME'} = "test.cgi";
+$env{'SERVER_NAME'} = "www.test.com";
+$env{'HTTP_HOST'} = "www.test.com";
+$env{'HTTP_REFERER'} = "http://" . $env{'HTTP_HOST'};
+$env{'SERVER_PORT'} = 8080;
+$env{'REQUEST_URI'} = "/test.cgi";
+$env{'REQUEST_METHOD'} = 'GET';
 
 my $options = {
 	'responsePlugin' => 'PSGI::Hector::Response::Raw',
 	'debug' => 1
 };
 
-my $m = PSGI::Hector->new($options);
+my $m = PSGI::Hector->new($options, \%env);
 #1
 isa_ok($m, "PSGI::Hector");
 
@@ -43,3 +44,9 @@ is($m->getFullUrl(), "http://www.test.com:8080/test.cgi", "PSGI::Hector::getFull
 
 #7
 is($m->getOption('debug'), 1, "PSGI::Hector::getOption()");
+
+#8
+{
+	my $env = $m->getEnv();
+	is($env{'REQUEST_METHOD'}, "GET", "PSGI::Hector::getEnv()");
+}

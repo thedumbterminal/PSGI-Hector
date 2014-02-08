@@ -7,17 +7,18 @@ use PSGI::Hector;
 use PSGI::Hector::Response::Raw;
 
 #setup our cgi environment
-$ENV{'SCRIPT_NAME'} = "test.cgi";
-$ENV{'SERVER_NAME'} = "www.test.com";
-$ENV{'HTTP_HOST'} = "www.test.com";
-$ENV{'HTTP_REFERER'} = "http://" . $ENV{'HTTP_HOST'};
-$ENV{'REQUEST_METHOD'} = 'GET';
+my %env;
+$env{'SCRIPT_NAME'} = "test.cgi";
+$env{'SERVER_NAME'} = "www.test.com";
+$env{'HTTP_HOST'} = "www.test.com";
+$env{'HTTP_REFERER'} = "http://" . $env{'HTTP_HOST'};
+$env{'REQUEST_METHOD'} = 'GET';
 
 my $options = {
 	'responsePlugin' => 'PSGI::Hector::Response::Raw'
 };
 
-my $m = PSGI::Hector->new($options);
+my $m = PSGI::Hector->new($options, \%env);
 
 my $raw = $m->getResponse();
 

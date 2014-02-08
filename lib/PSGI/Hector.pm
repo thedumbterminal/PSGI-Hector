@@ -330,10 +330,12 @@ sub __getActionDigest{
 }
 ###########################################################
 sub _getSefAction{
+	my $self = shift;
 	my $action = undef;
 	my @checkVars = ('SCRIPT_URL', 'REDIRECT_URL');	#possible places to look for actions
+	my $env = $self->getEnv();
 	foreach my $check (@checkVars){
-		if(defined($ENV{$check}) && $ENV{$check} =~ m/\/(.+)$/){	#get the action from the last part of the url
+		if(defined($env->{$check}) && $env->{$check} =~ m/\/(.+)$/){	#get the action from the last part of the url
 			$action = $1;
 			last;
 		}
@@ -374,8 +376,9 @@ sub _init{	#things to do when this object is created
 sub _checkReferer{	#simple referer check for very basic security
 	my $self = shift;
 	my $result = 0;
-	my $host = $ENV{'HTTP_HOST'};
-	if($host && $ENV{'HTTP_REFERER'} && $ENV{'HTTP_REFERER'} =~ m/^(http|https):\/\/$host/){	#simple check here
+	my $env = $self->getEnv();
+	my $host = $env->{'HTTP_HOST'};
+	if($host && $env->{'HTTP_REFERER'} && $env->{'HTTP_REFERER'} =~ m/^(http|https):\/\/$host/){	#simple check here
 		$result = 1;
 	}
 	else{

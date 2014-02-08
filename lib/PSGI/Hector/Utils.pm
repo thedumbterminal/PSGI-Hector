@@ -33,7 +33,8 @@ Returns the full URL for the current script, ignoring the query string if any.
 sub getThisUrl{
 	my $self = shift;
 	my $url = $self->getSiteUrl();
-	$ENV{'REQUEST_URI'} =~ m/^([^\?]+)/;	#match everything up to the query string if any
+	my $env = $self->getEnv();
+	$env->{'REQUEST_URI'} =~ m/^([^\?]+)/;	#match everything up to the query string if any
 	$url .= $1;
 	return $url;
 }
@@ -53,20 +54,21 @@ Returns the site URL for the current script, This includes the protocol and host
 sub getSiteUrl{
 	my $self = shift;
 	my $url = "";
-	if(exists($ENV{'HTTPS'})){	#are we running on ssl?
+	my $env = $self->getEnv();
+	if(exists($env->{'HTTPS'})){	#are we running on ssl?
 		$url .= "https://";
 	}       
 	else{	#on plain
 		$url .= "http://";
 	}
-	if($ENV{'HTTP_HOST'} =~ /^([^\:]+)(\:\d+|)$/){
+	if($env->{'HTTP_HOST'} =~ /^([^\:]+)(\:\d+|)$/){
 		$url .= $1;   #only want the hostname part 
-		if(exists($ENV{'SERVER_PORT'})){	#will have to assume port 80 if we don't have this
-			if(exists($ENV{'HTTPS'}) && $ENV{'SERVER_PORT'} != 443){        #add non default ssl port
-				$url .= ":" . $ENV{'SERVER_PORT'};
+		if(exists($env->{'SERVER_PORT'})){	#will have to assume port 80 if we don't have this
+			if(exists($env->{'HTTPS'}) && $env->{'SERVER_PORT'} != 443){        #add non default ssl port
+				$url .= ":" . $env->{'SERVER_PORT'};
 			}       
-			elsif(!exists($ENV{'HTTPS'}) && $ENV{'SERVER_PORT'} != 80){     #add non default plain port     
-				$url .= ":" . $ENV{'SERVER_PORT'};
+			elsif(!exists($env->{'HTTPS'}) && $env->{'SERVER_PORT'} != 80){     #add non default plain port     
+				$url .= ":" . $env->{'SERVER_PORT'};
 			}
 		}
 	}
@@ -87,7 +89,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2012 MacGyveR. All rights reserved.
+Copyright (c) 2014 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
