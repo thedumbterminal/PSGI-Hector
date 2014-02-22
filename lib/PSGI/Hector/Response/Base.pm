@@ -10,7 +10,7 @@ Response Base - Base object for view plugins
 =head1 SYNOPSIS
 
 	use myResponse;
-	my $response = myResponse->new($mungo);
+	my $response = myResponse->new($hector);
 	
 	package myResponse;
 	use base ("PSGI::Hector::Response::Base");
@@ -33,12 +33,12 @@ use Carp;
 use base qw(HTTP::Response PSGI::Hector::Base PSGI::Hector::Log);
 #########################################################
 sub new{
-	my($class, $mungo) = @_;
-	if(!defined($mungo)){
-		confess("No mungo object given");
+	my($class, $hector) = @_;
+	if(!defined($hector)){
+		confess("No hector object given");
 	}
 	my $self = $class->SUPER::new(200, "OK");	#we dont care about the code or msg as they get removed later
-	$self->{'_mungo'} = $mungo;	#so we can access the mungo object FIXME
+	$self->{'_hector'} = $hector;	#so we can access the hector object FIXME
 	$self->{'_displayedHeader'} = 0;	#flag set on first output
 	bless $self, $class;
 	return $self;
@@ -62,9 +62,9 @@ sub setCacheable{
 	return 1;
 }
 #########################################################
-sub getMungo{
+sub getHector{
 	my $self = shift;
-	return $self->{'_mungo'};
+	return $self->{'_hector'};
 }
 #########################################################
 sub display{

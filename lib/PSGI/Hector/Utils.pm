@@ -53,22 +53,24 @@ Returns the site URL for the current script, This includes the protocol and host
 ###########################################################
 sub getSiteUrl{
 	my $self = shift;
-	my $url = "";
 	my $env = $self->getEnv();
-	if(exists($env->{'HTTPS'})){	#are we running on ssl?
-		$url .= "https://";
-	}       
-	else{	#on plain
-		$url .= "http://";
+	my $proto = "http";
+	if(exists($env->{'HTTP_X_FORWARDED_PROTO'})){
+		$proto = $env->{'HTTP_X_FORWARDED_PROTO'};
 	}
+	elsif(exists($env->{'HTTPS'})){
+		$proto = "https";
+	}
+	my $url = $proto . "://";
 	if($env->{'HTTP_HOST'} =~ /^([^\:]+)(\:\d+|)$/){
-		$url .= $1;   #only want the hostname part 
-		if(exists($env->{'SERVER_PORT'})){	#will have to assume port 80 if we don't have this
-			if(exists($env->{'HTTPS'}) && $env->{'SERVER_PORT'} != 443){        #add non default ssl port
-				$url .= ":" . $env->{'SERVER_PORT'};
+		$url .= $1;   #only want the hostname part
+		my $port = $env->{'HTTP_X_FORWARDED_PORT'} || $env->{'SERVER_PORT'};
+		if($port){	#will have to assume port 80 if we don't have this
+			if($proto eq "https" && $port != 443){        #add non default ssl port
+				$url .= ":" . $port;
 			}       
-			elsif(!exists($env->{'HTTPS'}) && $env->{'SERVER_PORT'} != 80){     #add non default plain port     
-				$url .= ":" . $env->{'SERVER_PORT'};
+			elsif($proto eq "http" && $port != 80){     #add non default plain port     
+				$url .= ":" . $port;
 			}
 		}
 	}

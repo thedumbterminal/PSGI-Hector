@@ -162,18 +162,16 @@ If search engine friendly URLs are turned on the action will be determined from 
 ###########################################################
 sub getAction{
 	my $self = shift;
-	my $action = "default";	
-	if(defined($self->getOption('sefUrls')) && $self->getOption('sefUrls')){	#do we have search engine friendly urls
+	my $action = "default";
+	my $request = $self->getRequest();
+	my $params = $request->getParameters();
+	if(defined($params->{'action'})){	#get action from query string or post string
+		$action = $params->{'action'};
+	}
+	else{	#do we have search engine friendly urls
 		my $sefAction = $self->_getSefAction();
 		if($sefAction){
 			$action = $sefAction;
-		}
-	}
-	else{	#get action from query string or post string
-		my $request = $self->getRequest();
-		my $params = $request->getParameters();
-		if(defined($params->{'action'})){
-			$action = $params->{'action'};
 		}
 	}
 	return $action;	
@@ -219,16 +217,13 @@ sub getUrlForAction{
 	my($self, $action, $query) = @_;
 	my $url = undef;
 	if(defined($self->getOption('sefUrls')) && $self->getOption('sefUrls')){	#do we have search engine friendly urls
-		$url = $self->getSiteUrl() . "/";
-		if($query){	#add query string
-			$url .= "?" . $query;
-		}
+		$url = $self->getSiteUrl() . "/" . $action;
 	}
 	else{
 		$url = $self->getThisUrl() . "?action=" . $action;
-		if($query){	#add query string
-			$url .= "&" . $query;
-		}
+	}
+	if($query){	#add query string
+		$url .= "?" . $query;
 	}
 	return $url;
 }
@@ -270,7 +265,7 @@ sub run{	#run the code for the given action
 				$self->$subName();
 			};
 			if($@){	#problem with sub
-				$response->setError("<pre>" . $@ . "</pre>");
+				$response->setError($@);
 			}
 		}
 		else{	#no code to execute
@@ -332,13 +327,9 @@ sub __getActionDigest{
 sub _getSefAction{
 	my $self = shift;
 	my $action = undef;
-	my @checkVars = ('SCRIPT_URL', 'REDIRECT_URL');	#possible places to look for actions
 	my $env = $self->getEnv();
-	foreach my $check (@checkVars){
-		if(defined($env->{$check}) && $env->{$check} =~ m/\/(.+)$/){	#get the action from the last part of the url
-			$action = $1;
-			last;
-		}
+	if(defined($env->{'PATH_INFO'}) && $env->{'PATH_INFO'} =~ m/\/(.+)$/){	#get the action from the last part of the url
+		$action = $1;
 	}
 	return $action;
 }

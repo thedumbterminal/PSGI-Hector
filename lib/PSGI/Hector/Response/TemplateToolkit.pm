@@ -9,7 +9,7 @@ Response TemplateToolkit - View plugin using template toolkit
 
 =head1 SYNOPSIS
 
-	my $response = $mungo->getResponse();
+	my $response = $hector->getResponse();
 	$response->setTemplateVar("hello", $something);
 
 =head1 DESCRIPTION
@@ -24,15 +24,13 @@ With this class you can specify empty Mungo actions to just display a static pag
 
 use strict;
 use warnings;
-use File::Basename;
-use File::Spec;
 use Template;
 use Carp;
 use base qw(PSGI::Hector::Response::Base);
 our $templateLoc = "root/templates";	#where the templates are stored
 #########################################################
 
-=head2 new($mungo)
+=head2 new($hector)
 
 Constructor, All environment hash is saved in template variable "env" and the current action is saved as "action" so they can be accessed
 along with any other variables stored during the server action in the usual template toolkit way.
@@ -41,15 +39,15 @@ along with any other variables stored during the server action in the usual temp
 
 #########################################################
 sub new{
-	my($class, $mungo) = @_;
-	my $self = $class->SUPER::new($mungo);
+	my($class, $hector) = @_;
+	my $self = $class->SUPER::new($hector);
 	$self->{'_template'} = undef;	
 	$self->{'_templateVars'} = {};
 	bless $self, $class;
 	$self->setTemplateVar("env", \%ENV);	#include this var by default
-	$self->setTemplateVar("hector", $mungo);        #this will be handy to have too
-	$self->setTemplateVar("action", $mungo->getAction());        #this will be handy to have too
-	$self->setTemplateVar("debug", $mungo->getOption("debug"));
+	$self->setTemplateVar("hector", $hector);	#this will be handy to have too
+	$self->setTemplateVar("action", $hector->getAction());	#this will be handy to have too
+	$self->setTemplateVar("debug", $hector->getOption("debug"));
 	return $self;
 }
 #########################################################
@@ -110,16 +108,16 @@ sub display{	#this sub will display the page headers if needed
 		$output = $self->_getContent();	#get the contents of the template
 	}
 	else{	#first output so display any headers
-        if($self->header("Location")){
-          $self->code(302);
-          $self->message('Found');
-        }
-        else{ #if we dont have a redirect
-	        if(!$self->header("Content-type")){ #set default content type
-	            $self->header("Content-type" => "text/html");
-	        }
+		if($self->header("Location")){
+			$self->code(302);
+			$self->message('Found');
+		}
+		else{ #if we dont have a redirect
+			if(!$self->header("Content-type")){ #set default content type
+				$self->header("Content-type" => "text/html");
+			}
 			my $content = $self->_getContent();	#get the contents of the template
-			$self->content($content);
+			$self->add_content_utf8($content);
 		}
 		if($self->getError() && $self->code() =~ m/^[123]/){	#set the error code when needed
 			$self->code(500);
@@ -128,16 +126,14 @@ sub display{	#this sub will display the page headers if needed
 		$output = "Status: " . $self->as_string();
 	}
 	if($self->getError()){
-		$self->getMungo()->log($self->getError());	#just log it so we have a record of this
+		$self->getHector()->log($self->getError());	#just log it so we have a record of this
 	}
 	$self->_setDisplayedHeader();	#we wont display the header again
 	my @headers;
 	foreach my $field ($self->header_field_names){
 		push(@headers, $field => $self->header($field));
 	}
-	#print STDERR Dumper(\@headers);
-    
-	return [$self->code(), \@headers, [$self->content()]]
+	return [$self->code(), \@headers, [$self->content()]];
 }
 #########################################################
 
@@ -195,7 +191,6 @@ sub _getTemplateVars{
 sub _getContent{
 	my $self = shift;
 	my $content = "";
-	print STDERR "path: " . $self->_getTemplatePath() . "\n"; 
 	my $tt = Template->new(
 		{
 			INCLUDE_PATH => $self->_getTemplatePath(),
@@ -221,24 +216,14 @@ sub _getContent{
 ###########################################################
 sub _getTemplateNameForAction{
 	my $self = shift;
-	my $mungo = $self->getMungo();
-	my $action = $mungo->getAction();
+	my $hector = $self->getHector();
+	my $action = $hector->getAction();
 	$action =~ s/ /_/g;	#remove spaces in action if any
 	return $action;
 }
 #########################################################
 sub _getTemplatePath{
-	my $self = shift;
-	my $mungo = $self->getMungo();
-	my $env = $mungo->getEnv();
-	my @dirs;
-	if($env->{'PATH_INFO'} ne "/"){
-        my $currentDir = dirname($env->{'PATH_INFO'});
-        @dirs = File::Spec->splitdir($currentDir);
-        shift(@dirs);
-        @dirs = map("..", @dirs);
-	}
-    return File::Spec->catfile(@dirs, $templateLoc);
+	$templateLoc;
 }
 ##############################################################
 

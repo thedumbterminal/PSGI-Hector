@@ -1,13 +1,10 @@
 package PSGI::Hector::Log;
 use strict;
 use warnings;
-use base qw(PSGI::Hector::Utils);
 ###########################################################
 sub log{	#a simple way to log a message to the apache error log
 	my($self, $message) = @_;
-	my $date = localtime();	#add the time
-	my $script = $self->_getScriptName();	#add the name of the script
-	print STDERR $script . " " . $message . "\n";
+	print STDERR $message . "\n";
 	return 1;
 }
 #################################################
