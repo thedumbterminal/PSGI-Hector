@@ -42,7 +42,7 @@ use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.9";
+our $VERSION = "1.0";
 #########################################################
 
 =head2 new(\%options)
@@ -445,12 +445,7 @@ Defaults to ref($self)::Request
 
 =head3 sefUrls
 
-A boolean value indicating if search engine friendly URLS are to be used. The following .htaccess rewrite rule should be
-used:
-
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$         /cgi-bin/app.cgi [L]
+A boolean value indicating if search engine friendly URLs are to be used.
 
 =head3 debug
 

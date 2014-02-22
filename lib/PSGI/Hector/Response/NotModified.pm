@@ -83,6 +83,8 @@ sub setTemplateVar{
 
 =pod
 
+=head1 Notes
+
 =head1 Author
 
 MacGyveR <dumb@cpan.org>
@@ -91,7 +93,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2013 MacGyveR. All rights reserved.
+Copyright (c) 2014 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
