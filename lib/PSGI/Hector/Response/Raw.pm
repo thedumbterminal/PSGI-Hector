@@ -9,7 +9,7 @@ Response Raw - Raw text view plugin
 
 =head1 SYNOPSIS
 
-	my $response = $mungo->getResponse();
+	my $response = $hector->getResponse();
 	$response->setContent("Hello World");
 
 =head1 DESCRIPTION
@@ -27,8 +27,8 @@ use warnings;
 use base ("PSGI::Hector::Response::Base");
 #########################################################
 sub new{
-	my($class, $mungo) = @_;
-	my $self = $class->SUPER::new($mungo);
+	my($class, $hector) = @_;
+	my $self = $class->SUPER::new($hector);
 	$self->{'_outputContent'} = "";	
 	bless $self, $class;
 	return $self;
@@ -58,9 +58,8 @@ sub setContent{
 #########################################################
 sub display{	#this sub will display the page headers if needed
 	my $self = shift;
-	my $output;
 	if($self->_getDisplayedHeader()){	#just display more content
-		$output = $self->_getContent();	#get the contents of the template
+		return $self->_getContent();	#get the contents of the template
 	}
 	else{	#first output so display any headers
 		if(!$self->header("Content-type")){	#set default content type
@@ -74,12 +73,9 @@ sub display{	#this sub will display the page headers if needed
 			$self->code(500);
 			$self->message('Internal Server Error');
 		}
-		$output = "Status: " . $self->as_string();
 	}
-	print $output;
-	
 	$self->_setDisplayedHeader();	#we wont display the header again
-	return 1;
+	return $self->SUPER::display();
 }
 #########################################################
 # private methods

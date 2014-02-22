@@ -5,7 +5,7 @@ my $build = Module::Build->new(
 	module_name => 'PSGI::Hector',
 	license => 'perl',
 	dist_author => 'MacGyveR <dumb@cpan.org>',
-	dist_abstract => 'Very simple CGI web framework',
+	dist_abstract => 'Very simple PSGI web framework',
 	requires => {
 		"CGI::Simple::Cookie" => 0,
 		"HTTP::Response" => 0,
@@ -18,8 +18,7 @@ my $build = Module::Build->new(
 		"Class::Load" => 0,
 	},
 	build_requires => {
-		"Test::More" => 0,
-		"HTTP::Status" => 0
+		"Test::More" => 0
 	},
 	create_makefile_pl => 'traditional'
 );

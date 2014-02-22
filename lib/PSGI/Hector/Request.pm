@@ -9,7 +9,7 @@ PSGI::Hector::Request - Form request class
 
 =head1 SYNOPSIS
 
-	my $r = $mungo->getRequest();
+	my $r = $hector->getRequest();
 	my $params = $r->getParameters();
 
 =head1 DESCRIPTION

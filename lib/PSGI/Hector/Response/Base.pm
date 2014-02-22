@@ -68,7 +68,12 @@ sub getHector{
 }
 #########################################################
 sub display{
-	confess("display() not overridden");
+	my $self = shift;
+	my @headers;
+	foreach my $field ($self->header_field_names){
+		push(@headers, $field => $self->header($field));
+	}
+	return [$self->code(), \@headers, [$self->content()]];
 }
 #########################################################
 # private methods

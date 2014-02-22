@@ -1,0 +1,24 @@
+#!include_default
+# Avoid configuration metadata file
+^MYMETA\.
+
+# Avoid Module::Build generated and utility files.
+\bBuild$
+\bBuild.bat$
+\b_build
+\bBuild.COM$
+\bBUILD.COM$
+\bbuild.com$
+^MANIFEST\.SKIP
+
+# Avoid archives of this distribution
+\bPSGI-Hector-[\d\.\_]+
+
+#avoid eclipse project files
+.project
+.includepath
+
+#avoid own docs
+how_to_release.txt
+
+\B\.svn\b

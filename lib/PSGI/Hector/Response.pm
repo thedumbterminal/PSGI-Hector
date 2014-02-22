@@ -24,7 +24,7 @@ use Carp;
 
 =pod
 
-=head2 new($mungo, $plugin)
+=head2 new($hector, $plugin)
 
 Constructor, a factory method that will return an instance of the requested response plugin.
 
@@ -35,11 +35,11 @@ will be returned instead.
 
 #########################################################
 sub new{
-	my($class, $mungo, $plugin) = @_;
+	my($class, $hector, $plugin) = @_;
 	if($plugin){
 		eval "use $plugin;";	#should do this a better way
 		if(!$@){	#plugin loaded ok
-			my $self = $plugin->new($mungo);
+			my $self = $plugin->new($hector);
 			return $self;			
 		}
 		else{

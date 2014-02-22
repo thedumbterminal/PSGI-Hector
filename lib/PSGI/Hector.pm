@@ -5,15 +5,18 @@ package PSGI::Hector;
 
 =head1 NAME
 
-PSGI::Hector - Very simple CGI web framework
+PSGI::Hector - Very simple PSGI web framework
 
 =head1 SYNOPSIS
 
-	my $options = {
-		'responsePlugin' => 'Some::Class'
+	my $app = sub {
+		my $env = shift;
+		my $options = {
+			'responsePlugin' => 'Some::Class'
+		};
+		my $h = App->new($options, $env);
+		return $h->run();	#do this thing!
 	};
-	my $m = App->new($options);
-	$m->run();	#do this thing!
 	###########################
 	package App;
 	use base qw(PSGI::Hector);
@@ -52,7 +55,7 @@ our $VERSION = "1.9";
 		'SefUrls' => 0,
 		'debug' => 1
 	};
-	my $m = PSGI::Hector->new($options);
+	my $h = PSGI::Hector->new($options);
 
 Constructor, requires a hash references to be passed as the only argument. This hash reference contains any general
 options for the framework.
@@ -94,7 +97,7 @@ sub new{
 
 =head2 getResponse()
 
-	my $response = $m->getResponse();
+	my $response = $h->getResponse();
 
 Returns an instance of the response plugin object, previously defined in the constructor options.
 See L<PSGI::Hector::Response> for more details.
@@ -112,7 +115,7 @@ sub getResponse{
 
 =head2 getSession()
 
-	my $session = $m->getSession();
+	my $session = $h->getSession();
 
 Returns an instance of the L<PSGI::Hector::Session> object.
 
@@ -129,7 +132,7 @@ sub getSession{
 
 =head2 getRequest()
 
-	my $request = $m->getRequest();
+	my $request = $h->getRequest();
 
 Returns an instance of the L<PSGI::Hector::Request> object.
 
@@ -150,7 +153,7 @@ sub getRequest{
 
 =head2 getAction()
 
-	my $action = $m->getAction();
+	my $action = $h->getAction();
 
 Returns the curent action that the web application is performing. This is the current value of the "action"
 request form field or query string item.
@@ -182,7 +185,7 @@ sub getAction{
 
 =head2 getFullUrl()
 
-	my $url = $m->getFullUrl();
+	my $url = $h->getFullUrl();
 
 Returns the full URL for the application.
 
@@ -206,7 +209,7 @@ sub getFullUrl{
 
 =head2 getUrlForAction($action, $queryString)
 
-	my $url = $m->getUrlForAction("someAction", "a=b&c=d");
+	my $url = $h->getUrlForAction("someAction", "a=b&c=d");
 
 Returns the Full URL for the application with the given action and query string
 
@@ -233,7 +236,7 @@ sub getUrlForAction{
 
 =head2 run()
 
-	$m->run();
+	$h->run();
 
 This methood is required for the web application to deal with the current request.
 It should be called after any setup is done.
@@ -282,7 +285,7 @@ sub run{	#run the code for the given action
 
 =head2 getOption("key")
 
-	my $value = $m->getOption("debug");
+	my $value = $h->getOption("debug");
 
 Returns the value of the configuration option given.
 

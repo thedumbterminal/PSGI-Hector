@@ -96,7 +96,6 @@ Template chosen: app-login.html
 #########################################################
 sub display{	#this sub will display the page headers if needed
 	my $self = shift;
-	my $output;
 	if(!$self->getTemplate()){	#if no template has been set in the action sub then we set a default
 		my $tName = $self->_getTemplateNameForAction();
 		$self->setTemplate($tName);	#set the template automatically
@@ -105,7 +104,7 @@ sub display{	#this sub will display the page headers if needed
 		$self->setError("No template defined");
 	}
 	if($self->_getDisplayedHeader()){	#just display more content
-		$output = $self->_getContent();	#get the contents of the template
+		return $self->_getContent();	#get the contents of the template
 	}
 	else{	#first output so display any headers
 		if($self->header("Location")){
@@ -123,17 +122,12 @@ sub display{	#this sub will display the page headers if needed
 			$self->code(500);
 			$self->message('Internal Server Error');
 		}
-		$output = "Status: " . $self->as_string();
 	}
 	if($self->getError()){
 		$self->getHector()->log($self->getError());	#just log it so we have a record of this
 	}
 	$self->_setDisplayedHeader();	#we wont display the header again
-	my @headers;
-	foreach my $field ($self->header_field_names){
-		push(@headers, $field => $self->header($field));
-	}
-	return [$self->code(), \@headers, [$self->content()]];
+	return $self->SUPER::display();
 }
 #########################################################
 

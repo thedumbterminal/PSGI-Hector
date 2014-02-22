@@ -9,7 +9,7 @@ Response NotModified - View plugin to return a 304 Response
 
 =head1 SYNOPSIS
 
-	my $response = $mungo->getResponse();
+	my $response = $hector->getResponse();
 
 =head1 DESCRIPTION
 
@@ -26,7 +26,7 @@ use Carp;
 use base qw(PSGI::Hector::Response::Base);
 #########################################################
 
-=head2 new($mungo)
+=head2 new($hector)
 
 Constructor, sets the HTTP response code to 304
 
@@ -34,8 +34,8 @@ Constructor, sets the HTTP response code to 304
 
 #########################################################
 sub new{
-	my($class, $mungo) = @_;
-	my $self = $class->SUPER::new($mungo);
+	my($class, $hector) = @_;
+	my $self = $class->SUPER::new($hector);
 	bless $self, $class;
 	$self->code(304);
 	$self->message('Not Modified');

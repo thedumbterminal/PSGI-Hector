@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use lib qw(lib ../lib);
-plan(tests => 9);
+plan(tests => 11);
 #1
 use_ok("PSGI::Hector");
 #2
@@ -18,6 +18,10 @@ use_ok("PSGI::Hector::Session");
 #7
 use_ok("PSGI::Hector::Utils");
 #8
-use_ok("PSGI::Hector::Response::Raw");
+use_ok("PSGI::Hector::Response::Base");
 #9
+use_ok("PSGI::Hector::Response::NotModified");
+#10
+use_ok("PSGI::Hector::Response::Raw");
+#11
 use_ok("PSGI::Hector::Response::TemplateToolkit");

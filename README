@@ -1,0 +1,8 @@
+Simple web framework based on PSGI.
+
+For a simple example:
+
+1) Run plackup script/hector_hello.psgi
+2) connect to http://localhost:5000/
+
+Please send all feeback/bug reports to dumb@cpan.org

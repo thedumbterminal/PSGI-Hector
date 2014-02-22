@@ -1,5 +1,4 @@
 #Session functions
-#mt	20070113	cookies should now expire
 package PSGI::Hector::Session;
 
 =pod
@@ -10,7 +9,7 @@ PSGI::Hector::Session - Session class
 
 =head1 SYNOPSIS
 
-	my $s = $mungo->getSession();
+	my $s = $hector->getSession();
 	$s->setVar('name', 'value');
 	my $var = $s->getVar('name');
 
@@ -29,7 +28,7 @@ use Data::Dumper;
 use CGI::Simple::Cookie;
 use File::Spec;
 use base qw(PSGI::Hector::Base PSGI::Hector::Log);
-our $prefix = "MG";
+our $prefix = "HT";
 our $path = "/tmp";
 ##############################################################################################################################
 sub new{	#constructor
