@@ -42,7 +42,7 @@ use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.0";
+our $VERSION = "1.1";
 #########################################################
 
 =head2 new(\%options)
@@ -67,6 +67,7 @@ sub new{
 	my($class, $options, $env) = @_;
 	if($options->{'responsePlugin'}){	#this option is mandatory
 		my $self = $class->SUPER::new();
+		$self->{'_env'} = $env;
 		$self->{'_options'} = $options;
 		my $sessionClass = $self->__getFullClassName("Session");
 		if($self->getOption('sessionClass')){
@@ -82,7 +83,6 @@ sub new{
 		}
 		$self->{'_request'} = $requestClass->new($env);
 		$self->{'_response'} = PSGI::Hector::Response->new($self, $self->getOption('responsePlugin'));	#this could need access to a request object	
-		$self->{'_env'} = $env;
 		$self->_init();	#perform initial setup
 		return $self;
 	}
@@ -411,7 +411,7 @@ sub _getScriptName{ #returns the basename of the running script
 
 =head1 CONFIGURATION SUMMARY
 
-The following list gives a summary of each Mungo 
+The following list gives a summary of each Hector 
 configuration options. 
 
 =head3 responsePlugin

@@ -9,7 +9,7 @@ PSGI::Hector::Utils - Helper methods
 
 =head1 DESCRIPTION
 
-Various methods used by several of the Mungo classes.
+Various methods used by several of the Hector classes.
 
 =head1 METHODS
 

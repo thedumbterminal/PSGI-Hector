@@ -4,7 +4,7 @@ package PSGI::Hector::Base;
 
 =head1 NAME
 
-PSGI::Hector::Base - Base Mungo class
+PSGI::Hector::Base - Base Hector class
 
 =head1 SYNOPSIS
 

@@ -16,7 +16,7 @@ Response TemplateToolkit - View plugin using template toolkit
 
 This view plugin allows you to read a template file and replace placholders with scalar variables.
 
-With this class you can specify empty Mungo actions to just display a static page.
+With this class you can specify empty Hector actions to just display a static page.
 
 =head1 METHODS
 
@@ -44,7 +44,7 @@ sub new{
 	$self->{'_template'} = undef;	
 	$self->{'_templateVars'} = {};
 	bless $self, $class;
-	$self->setTemplateVar("env", \%ENV);	#include this var by default
+	$self->setTemplateVar("env", $hector->getEnv());	#include this var by default
 	$self->setTemplateVar("hector", $hector);	#this will be handy to have too
 	$self->setTemplateVar("action", $hector->getAction());	#this will be handy to have too
 	$self->setTemplateVar("debug", $hector->getOption("debug"));
@@ -169,6 +169,18 @@ sub setTemplateVar{
 	return 1;
 }
 #########################################################
+
+=pod
+
+=head2 getTemplateVar($name)
+
+	$response->getTemplateVar("name");
+
+Returns the value of the given template variable.
+
+=cut
+
+#########################################################
 sub getTemplateVar{
 	my($self, $name) = @_;
 	my $vars = $self->_getTemplateVars();
@@ -232,7 +244,7 @@ To change the template location use the following code at the top of your script
 
 	$PSGI::Hector::Response::SimpleTemplate::templateLoc = "../root";
 
-=head1 Sess also
+=head1 See also
 
 L<Template>
 
