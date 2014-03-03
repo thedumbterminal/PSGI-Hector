@@ -1,3 +1,10 @@
+PSGI::Hector 1.1 -- 03/03/2014
+
+	Fixed env passing to response class
+	
+	Updated docs
+
+
 PSGI::Hector 1.0 -- 22/02/2014
 
 	Initial Release
