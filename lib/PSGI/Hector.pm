@@ -42,7 +42,7 @@ use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.1";
+our $VERSION = "1.2";
 #########################################################
 
 =head2 new(\%options)
@@ -52,7 +52,7 @@ our $VERSION = "1.1";
 		'checkReferer' => 0,
 		'sessionClass' => 'Some::Class',
 		'requestClass' => 'Some::Class',
-		'SefUrls' => 0,
+		'sefUrls' => 0,
 		'debug' => 1
 	};
 	my $h = PSGI::Hector->new($options);
@@ -183,23 +183,20 @@ sub getAction{
 
 =pod
 
-=head2 getFullUrl()
+=head2 getUrlForAction($action, $queryString)
 
-	my $url = $h->getFullUrl();
+	my $url = $h->getUrlForAction("someAction", "a=b&c=d");
 
-Returns the full URL for the application.
+Returns the URL for the application with the given action and query string.
 
 =cut
 
 #########################################################
-sub getFullUrl{
-	my $self = shift;
-	my $url = undef;
-	if(defined($self->getOption('sefUrls')) && $self->getOption('sefUrls')){	#do we have search engine friendly urls
-		$url = $self->getSiteUrl() . "/";
-	}
-	else{
-		$url = $self->getThisUrl();
+sub getUrlForAction{
+	my($self, $action, $query) = @_;
+	my $url = "/" . $action;
+	if($query){	#add query string
+		$url .= "?" . $query;
 	}
 	return $url;
 }
@@ -207,28 +204,18 @@ sub getFullUrl{
 
 =pod
 
-=head2 getUrlForAction($action, $queryString)
+=head2 getFullUrlForAction($action, $queryString)
 
-	my $url = $h->getUrlForAction("someAction", "a=b&c=d");
+	my $url = $h->getFullUrlForAction("someAction", "a=b&c=d");
 
-Returns the Full URL for the application with the given action and query string
+Returns the Full URL for the application with the given action and query string and hostname.
 
 =cut
 
 #########################################################
-sub getUrlForAction{
+sub getFullUrlForAction{
 	my($self, $action, $query) = @_;
-	my $url = undef;
-	if(defined($self->getOption('sefUrls')) && $self->getOption('sefUrls')){	#do we have search engine friendly urls
-		$url = $self->getSiteUrl() . "/" . $action;
-	}
-	else{
-		$url = $self->getThisUrl() . "?action=" . $action;
-	}
-	if($query){	#add query string
-		$url .= "?" . $query;
-	}
-	return $url;
+	$self->getSiteUrl() . $self->getUrlForAction($action, $query);
 }
 #########################################################
 
