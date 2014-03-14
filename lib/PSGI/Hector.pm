@@ -73,7 +73,7 @@ sub new{
 		if($self->getOption('sessionClass')){
 			$sessionClass = $self->getOption('sessionClass');
 		}
-		$self->{'_session'} = $sessionClass->new();	
+		$self->{'_session'} = $sessionClass->new($self);	
 		my $requestClass = $self->__getFullClassName("Request");
 		if($self->getOption('requestClass')){
 			$requestClass = $self->getOption('requestClass');
@@ -331,26 +331,6 @@ sub _init{	#things to do when this object is created
 	}
 	my $response = $self->getResponse();
 	my $session = $self->getSession();
-	my $existingSession = 0;
-	#don't care about errors below
-	if($session->read()){	#check for an existing session
-		if($session->validate()){
-			$existingSession = 1;
-			if($self->getOption('debug')){
-				$self->log("Existing session: " . $session->getId());
-			}
-		}
-	}
-	if(!$existingSession){	#start a new session
-		if($session->create({}, $response)){
-			if($self->getOption('debug')){
-				$self->log("Created new session: " . $session->getId());
-			}
-		}
-		else{
-			$response->setError($session->getError());	#now care about errors
-		}
-	}
 	return 1;
 }
 ###########################################################

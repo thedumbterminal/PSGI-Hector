@@ -112,6 +112,12 @@ sub getHeader{
 	}
 	return $value;
 }
+############################################################################################################
+sub getCookie{	#returns the value of a cookie
+	my($self, $name) = @_;
+	my $cookies = $self->cookies();
+	$cookies->{$name} || undef;
+}
 ####################################################
 sub __stringfy{
 	my($self, $item) = @_;

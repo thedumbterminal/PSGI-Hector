@@ -32,8 +32,9 @@ our $prefix = "HT";
 our $path = "/tmp";
 ##############################################################################################################################
 sub new{	#constructor
-	my $class = shift;
+	my($class, $hector) = @_;
 	my $self = $class->SUPER::new();
+	$self->{'_hector'} = $hector;
 	$self->{'id'} = undef;
 	$self->{'error'} = "";
 	$self->{'vars'} = {};
@@ -47,16 +48,17 @@ sub DESTROY{
 sub validate{	#runs the defined sub to see if this sesion is validate
 	my $self = shift;
 	if($self->getVar('remoteIp')){
-		if($self->getVar('remoteIp') eq $ENV{'REMOTE_ADDR'}){
-			if($self->getVar('scriptPath') && $self->getVar('scriptPath') eq $ENV{'SCRIPT_NAME'}){
+		my $env = $self->_getHector()->getEnv();
+		if($self->getVar('remoteIp') eq $env->{'REMOTE_ADDR'}){
+			if($self->getVar('scriptPath') && $self->getVar('scriptPath') eq $env->{'SCRIPT_NAME'}){
 				return 1;
 			}
 			else{
-				$self->log("Session " . $self->getVar('scriptPath') . " <> " . $ENV{'SCRIPT_NAME'});
+				$self->log("Session " . $self->getVar('scriptPath') . " <> " . $env->{'SCRIPT_NAME'});
 			}
 		}
 		else{
-			$self->log("Session " . $self->getVar('remoteIp') . " <> " . $ENV{'REMOTE_ADDR'});
+			$self->log("Session " . $self->getVar('remoteIp') . " <> " . $env->{'REMOTE_ADDR'});
 		}
 	}
 	else{
@@ -77,12 +79,14 @@ Takes two arguments, first the name of the variable then the value of the variab
 ##########################################################################################################################
 sub setVar{	#stores a variable in the session
 	my($self, $name, $value) = @_;
+	$self->_readOrCreate();
 	$self->_storeVar($name, $value);
 	return $self->_write();
 }
 ##########################################################################################################################
 sub getVar{	#gets a stored variable from the session
 	my($self, $name) = @_;
+	$self->_readOrCreate();
 	if(defined($self->{'vars'}->{$name})){
 		return $self->{'vars'}->{$name};
 	}
@@ -98,12 +102,6 @@ sub setError{
 sub getError{	#returns the last error
 	my $self = shift;
 	return $self->{'error'};
-}
-###########################################################################################################################
-sub setId{
-	my($self, $id) = @_;
-	$self->{'id'} = $id;	#save the id
-	return 1;
 }
 ###########################################################################################################################
 sub getId{	#returns the session id
@@ -130,37 +128,31 @@ The correct Set-Cookie header will be issued through the provided L<PSGI::Hector
 
 ##############################################################################################################
 sub create{	#creates a server-side cookie for the session
-	my($self, $hash_p, $response) = @_;
-	$self->setError("");	#as we are starting a new session we clear any previous errors first
+	my $self = shift;
 	my $result = 0;
+	$self->setError("");	#as we are starting a new session we clear any previous errors first
 	my $sessionId = time() * $$;	#time in seconds * process id
 	my $ctx = Digest::MD5->new;
 	$ctx->add($sessionId);
 	$sessionId = $self->_getPrefix() . $ctx->hexdigest;
-	$self->setId($sessionId);	#remember the session id
+	$self->_setId($sessionId);	#remember the session id
+	my $env = $self->_getHector()->getEnv();
 	#set some initial values
-	$self->setVar('remoteIp', $ENV{'REMOTE_ADDR'});
-	$self->setVar('scriptPath', $ENV{'SCRIPT_NAME'});
-	while(my($name, $value) = each(%{$hash_p})){	#save any user provided variables
-		$self->setVar($name, $value);
-	}
+	$self->_storeVar('remoteIp', $env->{'REMOTE_ADDR'});
+	$self->_storeVar('scriptPath', $env->{'SCRIPT_NAME'});
 	if(!$self->getError()){	#all ok so far
-		my $cookie = $self->_setCookie(VALUE => $sessionId);
-		if($response){
-			$response->header("Set-Cookie" => $cookie);
-		}
-		else{	#old method if it is still used
-			print "Set-Cookie: " , $cookie;
-		}
+		my $cookie = $self->_setCookie(VALUE => $self->getId());
+		my $response = $self->_getHector()->getResponse();
+		$response->header("Set-Cookie" => $cookie);
 		$result = 1;
 	}
-	return $result;
+	$result;
 }
 ##############################################################################################################
 sub read{	#read an existing session
 	my $self = shift;
 	my $result = 0;
-	my $sessionId = $self->_getCookie("SESSION");	#get the session id from the browser
+	my $sessionId = $self->_getHector()->getRequest()->getCookie("SESSION");	#get the session id from the browser
 	if(defined($sessionId)){	#got a sessionid of some sort
 		my $prefix = $self->_getPrefix();
 		if($sessionId =~ m/^($prefix[a-f0-9]+)$/){	#filename valid
@@ -180,7 +172,7 @@ sub read{	#read an existing session
 					}
 					$self->{'vars'} = $VAR1;
 					$result = 1;
-					$self->setId($sessionId);	#remember the session id
+					$self->_setId($sessionId);	#remember the session id
 				}
 				else{
 					$self->setError("Session contents invalid");
@@ -210,39 +202,52 @@ Remove the current session from memory, disk and expire it in the browser.
 sub delete{	#remove a session
 	my($self, $response) = @_;
 	my $result = 0;
-	my $sessionId = $self->getId();
-	my $prefix = $self->_getPrefix();
-	if($sessionId =~ m/^$prefix[a-f0-9]+$/){	#id valid
-		my $path = $self->_getPath();
-		my $sessionFile = File::Spec->catfile($path, $sessionId);
-		if(unlink($sessionFile)){
-			$self->log("Deleted session: $sessionId");
-			my $cookie = $self->_setCookie(EXPIRE => 'now');
-			if($response){
+	if($response){
+		my $sessionId = $self->getId();
+		my $prefix = $self->_getPrefix();
+		if($sessionId =~ m/^$prefix[a-f0-9]+$/){	#id valid
+			my $path = $self->_getPath();
+			my $sessionFile = File::Spec->catfile($path, $sessionId);
+			if(unlink($sessionFile)){
+				$self->log("Deleted session: $sessionId");
+				my $cookie = $self->_setCookie(EXPIRE => 'now');
 				$response->header("Set-Cookie" , => $cookie);
+				$self = undef;	#destroy this object
+				$result = 1;
 			}
 			else{
-				print "Set-Cookie: " , $cookie;
+				$self->setError("Could not delete session");
 			}
-			$self = undef;	#destroy this object
-			$result = 1;
 		}
 		else{
-			$self->setError("Could not delete session");
+			$self->setError("Session ID invalid: $sessionId");
 		}
 	}
 	else{
-		$self->setError("Session ID invalid: $sessionId");
+		$self->setError("No response given");
 	}
-	return $result;
+	$result;
 }
 ###############################################################################################################
 #private class method
 ###############################################################################################################
+sub _getHector{
+	my $self = shift;
+	return $self->{'_hector'};
+}
+###########################################################################################################################
+sub _setId{
+	my($self, $id) = @_;
+	$self->{'id'} = $id;	#save the id
+	return 1;
+}
+###############################################################################################################
 sub _setCookie{
 	my($self, %options) = @_;
 	my $secure = 0;
-	if(exists($ENV{'HTTPS'})){ #use secure cookies if running on ssl
+	my $hector = $self->_getHector();
+	my $env = $hector->getEnv();
+	if(exists($env->{'HTTPS'})){ #use secure cookies if running on ssl
 		$secure = 1;
 	}
 	my $cookie = CGI::Simple::Cookie->new(
@@ -305,20 +310,6 @@ sub _write{	#writes a server-side cookie for the session
 	if($self->getError()){return 0;}
 	else{return 1;}
 }
-############################################################################################################
-sub _getCookie{	#returns the value of a cookie
-	my $self = shift;
-	my $name = shift;
-	my $value = undef;
-	if(exists($ENV{'HTTP_COOKIE'})){	#we have some kind of cookie
-		my @pairs = split(/; /, $ENV{'HTTP_COOKIE'});	#this cookie might contain multiple name value pairs
-		foreach(@pairs){
-			my($n, $v) = split(/=/, $_, 2);
-			if($n eq $name){$value = $v;}
-		}
-	}
-	return $value;
-}
 ##########################################################################################################################
 sub _storeVar{	#stores a variable in the session
 	my($self, $name, $value) = @_;
@@ -341,6 +332,16 @@ sub _getPrefix{	#this should be a config option
 #####################################################################################################################
 sub _getPath{	#this should be a config option
 	return $path;
+}
+#####################################################################################################################
+sub _readOrCreate{
+	my $self = shift;
+	if($self->read() && $self->validate()){
+		$self->log("Existing session: " . $self->getId());
+	}
+	elsif($self->create()){	#start a new session
+		$self->log("Created new session: " . $self->getId());
+	}
 }
 #####################################################################################################################
 
