@@ -137,6 +137,8 @@ MacGyveR <dumb@cpan.org>
 
 Development questions, bug reports, and patches are welcome to the above address
 
+=head1 See Also
+
 =head1 Copyright
 
 Copyright (c) 2014 MacGyveR. All rights reserved.

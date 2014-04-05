@@ -16,6 +16,8 @@ my $build = Module::Build->new(
 		"Template" => 0,
 		"File::Spec" => 0,
 		"Class::Load" => 0,
+		"Cache::FileCache" => 0,
+		"File::Temp" => 0
 	},
 	build_requires => {
 		"Test::More" => 0

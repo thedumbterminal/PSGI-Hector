@@ -250,7 +250,6 @@ sub run{	#run the code for the given action
 		my $subName = "handle" . ucfirst($action);	#add prefix for security
 		my $class = ref($self);
 		if($class->can($subName)){	#default action sub exists
-			$self->log('Using action from auto default');	
 			eval{
 				$self->$subName();
 			};
@@ -261,7 +260,7 @@ sub run{	#run the code for the given action
 		else{	#no code to execute
 			$response->code(404);
 			$response->message('Not Found');
-			$response->setError("No action sub found for: $action");
+			$response->setError("No action found for: $action");
 		}
 	}
 	return $response->display();	#display the output to the browser
@@ -433,6 +432,8 @@ To change the session file save path use the following code at the top of your s
 MacGyveR <dumb@cpan.org>
 
 Development questions, bug reports, and patches are welcome to the above address
+
+=head1 See Also
 
 =head1 Copyright
 

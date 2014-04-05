@@ -99,7 +99,9 @@ sub _getContent{
 
 MacGyveR <dumb@cpan.org>
 
-Development questions, bug reports, and patches are welcome to the above address
+Development questions, bug reports, and patches are welcome to the above address.
+
+=head1 See Also
 
 =head1 Copyright
 
