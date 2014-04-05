@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 use lib qw(lib);
+use PSGI::Hector::Middleware;
+
 my $app = sub {
 	my $env = shift;
 	my $options = {
@@ -12,6 +14,9 @@ my $app = sub {
 	my $h = App->new($options, $env);
 	return $h->run();	#do this thing!
 };
+
+PSGI::Hector::Middleware->wrap($app);
+
 ###########################################
 ###########################################
 package App;
