@@ -87,7 +87,7 @@ sub new{
 		return $self;
 	}
 	else{
-		confess("No reponse plugin option provided");
+		confess("No response plugin option provided");
 	}
 	return undef;
 }
