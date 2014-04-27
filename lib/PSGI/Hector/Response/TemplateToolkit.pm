@@ -112,8 +112,8 @@ sub display{	#this sub will display the page headers if needed
 			$self->message('Found');
 		}
 		else{ #if we dont have a redirect
-			if(!$self->header("Content-type")){ #set default content type
-				$self->header("Content-type" => "text/html");
+			if(!$self->header("Content-Type")){ #set default content type
+				$self->header("Content-Type" => "text/html");
 			}
 			my $content = $self->_getContent();	#get the contents of the template
 			$self->add_content_utf8($content);
