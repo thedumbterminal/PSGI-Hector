@@ -7,6 +7,7 @@ my $build = Module::Build->new(
 	dist_author => 'MacGyveR <dumb@cpan.org>',
 	dist_abstract => 'Very simple PSGI web framework',
 	requires => {
+		"perl" => "5.006",
 		"CGI::Simple::Cookie" => 0,
 		"HTTP::Response" => 0,
 		"Plack" => 0,
