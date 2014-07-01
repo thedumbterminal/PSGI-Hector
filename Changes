@@ -1,3 +1,10 @@
+PSGI::Hector 1.2 -- 01/07/2014
+
+	Now only creates session cookies if sessions are used.
+	
+	Middleware added
+
+
 PSGI::Hector 1.1 -- 03/03/2014
 
 	Fixed env passing to response class
