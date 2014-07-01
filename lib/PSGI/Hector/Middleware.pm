@@ -35,7 +35,7 @@ Adds the following middleware to the application:
 Serving static files from "images", "js", "style" which are located in the "htdocs" directory. These
 will be minified in a production environment.
 
-Non static files will be compressed.
+Non static files will not be compressed.
 
 =cut
 

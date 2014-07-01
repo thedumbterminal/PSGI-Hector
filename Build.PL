@@ -17,7 +17,9 @@ my $build = Module::Build->new(
 		"File::Spec" => 0,
 		"Class::Load" => 0,
 		"Cache::FileCache" => 0,
-		"File::Temp" => 0
+		"File::Temp" => 0,
+		"Plack::Middleware::Static::Minifier" => 0,
+		"Plack::Middleware::Deflater" => 0
 	},
 	build_requires => {
 		"Test::More" => 0
