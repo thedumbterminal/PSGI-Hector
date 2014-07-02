@@ -19,8 +19,6 @@ Wraps the application in additional middleware.
 =cut
 
 use Plack::Builder;
-use Cache::FileCache;
-use File::Temp;
 use base ("Plack::Builder", "PSGI::Hector::Log");
 #########################################################
 
@@ -33,9 +31,9 @@ use base ("Plack::Builder", "PSGI::Hector::Log");
 Adds the following middleware to the application:
 
 Serving static files from "images", "js", "style" which are located in the "htdocs" directory. These
-will be minified in a production environment.
+will be minified, cached and compressed in a production environment.
 
-Non static files will not be compressed.
+Non static files will only be compressed.
 
 =cut
 
@@ -44,24 +42,12 @@ Non static files will not be compressed.
 sub wrap{
 	my($class, $app) = @_;
 	
-	my $cache;
-	if($ENV{'ENV'} && $ENV{'ENV'} eq "production"){
-		my $dir = File::Temp->newdir(CLEANUP => 0);
-		$class->log("Minified cache dir: " . $dir->dirname);
-		my $cache = Cache::FileCache->new(+{
-			cache_root => $dir->dirname,
-			namespace => 'ns',
-			default_expires_in => 60 * 60 * 24 * 7	#1 week
-		});
-	}
-	
 	builder{
 
 		#minify assets on production
-		enable_if{$ENV{'ENV'} && $ENV{'ENV'} eq "production"} "Plack::Middleware::Static::Minifier",
+		enable_if{$ENV{'ENV'} && $ENV{'ENV'} eq "production"} "Plack::Middleware::MCCS",
 			path => qr{^/(images|js|style)/},
-			root => './htdocs',
-			cache => $cache;
+			root => './htdocs'
 	
 		enable_if{!$ENV{'ENV'} || $ENV{'ENV'} ne "production"} "Static",
 			path => qr{^/(images|js|style)/},

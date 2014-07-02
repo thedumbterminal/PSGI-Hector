@@ -17,10 +17,10 @@ my $build = Module::Build->new(
 		"Template" => 0,
 		"File::Spec" => 0,
 		"Class::Load" => 0,
-		"Cache::FileCache" => 0,
-		"File::Temp" => 0,
-		"Plack::Middleware::Static::Minifier" => 0,
-		"Plack::Middleware::Deflater" => 0
+		"Plack::Middleware::MCCS" => 0,
+		"CSS::Minifier::XS" => 0,
+		"JavaScript::Minifier:XS" => 0,
+		"IO::Compress::Gzip" => 0
 	},
 	build_requires => {
 		"Test::More" => 0
