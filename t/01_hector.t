@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 10);
+plan(tests => 11);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
@@ -20,43 +20,47 @@ my $options = {
 	'debug' => 1
 };
 
-my $m = PSGI::Hector->new($options, \%env);
+my $sub = PSGI::Hector->init($options);
 #1
-isa_ok($m, "PSGI::Hector");
+isa_ok($sub, "CODE");
 
+my $h = PSGI::Hector->new($options, \%env);
 #2
-my $response = $m->getResponse();
-isa_ok($response, "PSGI::Hector::Response::Raw");
+isa_ok($h, "PSGI::Hector");
 
 #3
-my $session = $m->getSession();
-isa_ok($session, "PSGI::Hector::Session");
+my $response = $h->getResponse();
+isa_ok($response, "PSGI::Hector::Response::Raw");
 
 #4
-my $request = $m->getRequest();
+my $session = $h->getSession();
+isa_ok($session, "PSGI::Hector::Session");
+
+#5
+my $request = $h->getRequest();
 isa_ok($request, "PSGI::Hector::Request");
 
-#5 need to test getthisurl()
-is($m->getThisUrl(), "http://www.test.com:8080/test.cgi", "PSGI::Hector::Utils::getThisUrl()");
-
-#6
-is($m->getOption('debug'), 1, "PSGI::Hector::getOption()");
+#6 need to test getthisurl()
+is($h->getThisUrl(), "http://www.test.com:8080/test.cgi", "PSGI::Hector::Utils::getThisUrl()");
 
 #7
+is($h->getOption('debug'), 1, "PSGI::Hector::getOption()");
+
+#8
 {
-	my $env = $m->getEnv();
+	my $env = $h->getEnv();
 	is($env{'REQUEST_METHOD'}, "GET", "PSGI::Hector::getEnv()");
 }
 
-#8
-is($m->getUrlForAction("someAction", "a=b&c=d"), "/someAction?a=b&c=d", "PSGI::Hector::getUrlForAction()");
-
 #9
-is($m->getFullUrlForAction("someAction", "a=b&c=d"), "http://www.test.com:8080/someAction?a=b&c=d", "PSGI::Hector::getFullUrlForAction()");
+is($h->getUrlForAction("someAction", "a=b&c=d"), "/someAction?a=b&c=d", "PSGI::Hector::getUrlForAction()");
 
 #10
+is($h->getFullUrlForAction("someAction", "a=b&c=d"), "http://www.test.com:8080/someAction?a=b&c=d", "PSGI::Hector::getFullUrlForAction()");
+
+#11
 {
-	$m = PSGI::Hector->new($options, \%env);
-	my $response = $m->getResponse();
+	$h = PSGI::Hector->new($options, \%env);
+	my $response = $h->getResponse();
 	is($response->header("Set-Cookie"), undef, "New session not created on new()")
 }

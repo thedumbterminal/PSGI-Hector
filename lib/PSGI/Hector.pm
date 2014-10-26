@@ -9,17 +9,14 @@ PSGI::Hector - Very simple PSGI web framework
 
 =head1 SYNOPSIS
 
-	my $app = sub {
-		my $env = shift;
-		my $options = {
-			'responsePlugin' => 'Some::Class'
-		};
-		my $h = App->new($options, $env);
-		return $h->run();	#do this thing!
-	};
+	my $app = App->init({
+		'responsePlugin' => 'Some::Class',
+	});
+	###########################
 	###########################
 	package App;
 	use base qw(PSGI::Hector);
+	###########################
 	sub handleDefault{
 		#add code here for landing page
 	}
@@ -42,10 +39,10 @@ use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.2";
+our $VERSION = "1.3";
 #########################################################
 
-=head2 new(\%options)
+=head2 init(\%options)
 
 	my $options = {
 		'responsePlugin' => 'Some::Class',
@@ -55,10 +52,34 @@ our $VERSION = "1.2";
 		'sefUrls' => 0,
 		'debug' => 1
 	};
-	my $h = PSGI::Hector->new($options);
+	my $h = PSGI::Hector->init($options);
+	
+Factory class method, used in creating the application from the F<app.psgi> file. The return value 
+from this method can be used where ever $app would be used.
 
-Constructor, requires a hash references to be passed as the only argument. This hash reference contains any general
-options for the framework.
+This hash reference passed to the method contains any general options for the framework.
+
+=cut
+
+#########################################################
+sub init{
+	my($class, $options) = @_;
+	return sub {
+		my $env = shift;
+		my $h = $class->new($options, $env);
+		return $h->run();	#do this thing!
+	};
+}
+#########################################################
+
+=head2 new(\%options, \%env)
+
+	my $options = {};
+	my $h = PSGI::Hector->new($options, $env);
+
+Constructor, requires a hash references of options to be passed and the PSGI environment. 
+
+Usually this method is invoked from the init() class method.
 
 =cut
 

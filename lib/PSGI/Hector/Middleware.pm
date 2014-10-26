@@ -48,11 +48,11 @@ sub wrap{
 		enable_if{$ENV{'ENV'} && $ENV{'ENV'} eq "production"} "Plack::Middleware::MCCS",
 			path => qr{^/(images|js|style)/},
 			root => './htdocs'
-	
+		;
 		enable_if{!$ENV{'ENV'} || $ENV{'ENV'} ne "production"} "Static",
 			path => qr{^/(images|js|style)/},
 			root => './htdocs';
-	
+		;
 		enable sub {
 			my $app = shift;
 			sub {
