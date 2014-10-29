@@ -19,7 +19,7 @@ my $build = Module::Build->new(
 		"Class::Load" => 0,
 		"Plack::Middleware::MCCS" => 0,
 		"CSS::Minifier::XS" => 0,
-		"JavaScript::Minifier::XS" => 0,
+		"JavaScript::Minifier:XS" => 0,
 		"IO::Compress::Gzip" => 0
 	},
 	build_requires => {

@@ -1,10 +1,3 @@
 Build
 blib
 _build
-MANIFEST
-META.json
-META.yml
-MYMETA.json
-MYMETA.yml
-Makefile.PL
-*~
