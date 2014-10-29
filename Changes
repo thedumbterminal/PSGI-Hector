@@ -1,4 +1,4 @@
-PSGI::Hector 1.3 --
+PSGI::Hector 1.3 -- 29/10/2014
 
 	Now supports GET/POST parameters with multiple values.
 	Improved middleware for static assets
