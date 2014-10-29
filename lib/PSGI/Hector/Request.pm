@@ -35,12 +35,14 @@ use base qw(Plack::Request);
 
 Returns a hash reference of all the GET/POST values from the current request.
 
+Parameters that have multiple values will be returned as an array reference.
+
 =cut
 
 ##########################################
 sub getParameters{	#get POST or GET data
 	my $self = shift;
-	return $self->parameters()->as_hashref();
+	return $self->parameters->mixed;
 }
 #########################################################
 
