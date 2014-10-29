@@ -18,6 +18,8 @@ Wraps the application in additional middleware.
 
 =cut
 
+use strict;
+use warnings;
 use Plack::Builder;
 use base ("Plack::Builder", "PSGI::Hector::Log");
 #########################################################
