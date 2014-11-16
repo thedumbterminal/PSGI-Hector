@@ -17,6 +17,7 @@ my $build = Module::Build->new(
 		"Template" => 0,
 		"File::Spec" => 0,
 		"Class::Load" => 0,
+		"Plack::Middleware::Deflater" => 0,
 		"Plack::Middleware::MCCS" => 0,
 		"CSS::Minifier::XS" => 0,
 		"JavaScript::Minifier::XS" => 0,
