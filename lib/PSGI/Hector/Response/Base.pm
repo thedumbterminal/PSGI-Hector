@@ -13,7 +13,7 @@ Response Base - Base object for view plugins
 	my $response = myResponse->new($hector);
 	
 	package myResponse;
-	use base ("PSGI::Hector::Response::Base");
+	use parent ("PSGI::Hector::Response::Base");
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ The module L<PSGI::Hector::Response> will load the specified response plugin on 
 use strict;
 use warnings;
 use Carp;
-use base qw(HTTP::Response PSGI::Hector::Base PSGI::Hector::Log);
+use parent qw(HTTP::Response PSGI::Hector::Base PSGI::Hector::Log);
 #########################################################
 sub new{
 	my($class, $hector) = @_;

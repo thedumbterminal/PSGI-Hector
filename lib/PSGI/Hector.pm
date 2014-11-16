@@ -15,7 +15,8 @@ PSGI::Hector - Very simple PSGI web framework
 	###########################
 	###########################
 	package App;
-	use base qw(PSGI::Hector);
+	use PSGI::Hector;
+	use parent qw(PSGI::Hector);
 	###########################
 	sub handleDefault{
 		#add code here for landing page

@@ -26,7 +26,7 @@ use strict;
 use warnings;
 use Template;
 use Carp;
-use base qw(PSGI::Hector::Response::Base);
+use parent qw(PSGI::Hector::Response::Base);
 our $templateLoc = "root/templates";	#where the templates are stored
 #########################################################
 

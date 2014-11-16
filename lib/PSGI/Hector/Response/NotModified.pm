@@ -23,7 +23,7 @@ has a copy of the page already.
 use strict;
 use warnings;
 use Carp;
-use base qw(PSGI::Hector::Response::Base);
+use parent qw(PSGI::Hector::Response::Base);
 #########################################################
 
 =head2 new($hector)

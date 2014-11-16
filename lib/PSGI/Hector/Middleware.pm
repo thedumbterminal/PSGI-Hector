@@ -21,7 +21,7 @@ Wraps the application in additional middleware.
 use strict;
 use warnings;
 use Plack::Builder;
-use base ("Plack::Builder", "PSGI::Hector::Log");
+use parent ("Plack::Builder", "PSGI::Hector::Log");
 #########################################################
 
 =pod

@@ -24,7 +24,7 @@ use strict;
 use warnings;
 use Carp;
 use Data::Dumper;
-use base qw(Plack::Request);
+use parent qw(Plack::Request);
 #########################################################
 
 =pod

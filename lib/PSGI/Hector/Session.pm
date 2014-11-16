@@ -27,7 +27,7 @@ use Digest::MD5;
 use Data::Dumper;
 use CGI::Simple::Cookie;
 use File::Spec;
-use base qw(PSGI::Hector::Base PSGI::Hector::Log);
+use parent qw(PSGI::Hector::Base PSGI::Hector::Log);
 our $prefix = "HT";
 our $path = "/tmp";
 ##############################################################################################################################
