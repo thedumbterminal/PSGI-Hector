@@ -3,11 +3,14 @@
 use strict;
 use warnings;
 use lib qw(lib);
+use PSGI::Hector::Middleware;
 
 my $app = App->init({
 	'responsePlugin' => 'PSGI::Hector::Response::Raw',
 	'checkReferer' => 0
 });
+
+PSGI::Hector::Middleware->wrap($app);
 
 ###########################################
 ###########################################
