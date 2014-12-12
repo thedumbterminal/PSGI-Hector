@@ -76,7 +76,7 @@ sub getSiteUrl{
 		$url .= $env->{'SCRIPT_NAME'};
 	}
 	else{
-	   Confess("Invalid HTTP host header");
+		confess("Invalid HTTP host header");
 	}
 	return $url;
 }
