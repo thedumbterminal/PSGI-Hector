@@ -63,16 +63,17 @@ sub getSiteUrl{
 	}
 	my $url = $proto . "://";
 	if($env->{'HTTP_HOST'} =~ /^([^\:]+)(\:\d+|)$/){
-		$url .= $1;   #only want the hostname part
+		$url .= $1;	#only want the hostname part
 		my $port = $env->{'HTTP_X_FORWARDED_PORT'} || $env->{'SERVER_PORT'};
 		if($port){	#will have to assume port 80 if we don't have this
 			if($proto eq "https" && $port != 443){        #add non default ssl port
 				$url .= ":" . $port;
-			}       
+			}
 			elsif($proto eq "http" && $port != 80){     #add non default plain port     
 				$url .= ":" . $port;
 			}
 		}
+		$url .= $env->{'SCRIPT_NAME'};
 	}
 	else{
 	   Confess("Invalid HTTP host header");
