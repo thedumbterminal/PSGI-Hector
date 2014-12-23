@@ -448,6 +448,17 @@ To change the session prefix characters use the following code at the top of you
 To change the session file save path use the following code at the top of your script:
 
 	$PSGI::Hector::Session::path = "/var/tmp";
+	
+=head2 Reverse proxies
+
+To run your application behind a reverse proxy using apache, please use the following setup:
+
+	<Location /psgi>
+		RequestHeader set X-Forwarded-Script-Name /psgi
+		RequestHeader set X-Traversal-Path /
+		ProxyPass http://localhost:8080/
+		ProxyPassReverse http://localhost:8080/
+	</Location>
 
 =head1 Author
 
