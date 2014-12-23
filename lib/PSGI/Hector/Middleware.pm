@@ -46,6 +46,13 @@ sub wrap{
 	
 	builder{
 
+		# ReverseProxy fixes scheme/host/port
+		enable "ReverseProxy";
+
+		# ReverseProxyPath uses new headers
+		# fixes SCRIPT_NAME and PATH_INFO
+		enable "ReverseProxyPath";
+
 		#minify assets on production
 		enable_if{$ENV{'ENV'} && $ENV{'ENV'} eq "production"} "Plack::Middleware::MCCS",
 			path => qr{^/(images|js|style)/},

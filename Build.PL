@@ -22,7 +22,9 @@ my $build = Module::Build->new(
 		"Plack::Middleware::MCCS" => 0,
 		"CSS::Minifier::XS" => 0,
 		"JavaScript::Minifier::XS" => 0,
-		"IO::Compress::Gzip" => 0
+		"IO::Compress::Gzip" => 0,
+		"Plack::Middleware::ReverseProxy" => "",
+		"Plack::Middleware::ReverseProxyPath" => ""
 	},
 	build_requires => {
 		"Test::More" => 0
