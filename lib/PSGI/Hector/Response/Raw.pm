@@ -24,7 +24,7 @@ Content is displayed at the end of the page request.
 
 use strict;
 use warnings;
-use base ("PSGI::Hector::Response::Base");
+use parent ("PSGI::Hector::Response::Base");
 #########################################################
 sub new{
 	my($class, $hector) = @_;

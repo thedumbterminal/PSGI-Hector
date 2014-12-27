@@ -36,7 +36,7 @@ use warnings;
 use Carp;
 use File::Basename;
 use Class::Load qw(is_class_loaded);
-use base qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
+use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
