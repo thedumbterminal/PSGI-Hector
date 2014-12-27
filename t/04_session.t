@@ -9,7 +9,7 @@ use PSGI::Hector;
 my %env;
 $env{'SCRIPT_NAME'} = "test.cgi";
 $env{'SERVER_NAME'} = "www.test.com";
-$env{'HTTP_HOST'} = "www.test.com";
+$env{'HTTP_HOST'} = "www.test.com:8080";
 $env{'HTTP_REFERER'} = "http://" . $env{'HTTP_HOST'};
 $env{'SERVER_PORT'} = 8080;
 $env{'REQUEST_URI'} = "/test.cgi";

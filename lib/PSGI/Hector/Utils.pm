@@ -23,20 +23,13 @@ use Carp;
 
 =head2 getThisUrl()
 
-	my $url = $m->getThisUrl();
-
-Returns the full URL for the current script, ignoring the query string if any.
+DEPRECATED please use getSiteUrl() instead.
 
 =cut
 
 ###########################################################
 sub getThisUrl{
-	my $self = shift;
-	my $url = $self->getSiteUrl();
-	my $env = $self->getEnv();
-	$env->{'REQUEST_URI'} =~ m/^([^\?]+)/;	#match everything up to the query string if any
-	$url .= $1;
-	return $url;
+	shift->getSiteUrl();
 }
 #########################################################
 
@@ -52,8 +45,7 @@ Returns the full site URL for the current script.
 
 ###########################################################
 sub getSiteUrl{
-	my $self = shift;
-	my $request = $self->getRequest();
+	my $request = shift->getRequest();
 	$request->base->as_string;
 }
 #############################################################################################################
