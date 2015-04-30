@@ -1,4 +1,4 @@
-PSGI::Hector 1.5 --
+PSGI::Hector 1.5 -- 01/05/205
 
 	Fixed recursion bug for session variables.
 
