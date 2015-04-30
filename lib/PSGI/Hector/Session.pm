@@ -38,6 +38,7 @@ sub new{	#constructor
 	$self->{'id'} = undef;
 	$self->{'error'} = "";
 	$self->{'vars'} = {};
+	$self->_readOrCreate();
 	return $self;
 }
 #########################################################################################################################
@@ -79,14 +80,12 @@ Takes two arguments, first the name of the variable then the value of the variab
 ##########################################################################################################################
 sub setVar{	#stores a variable in the session
 	my($self, $name, $value) = @_;
-	$self->_readOrCreate();
 	$self->_storeVar($name, $value);
 	return $self->_write();
 }
 ##########################################################################################################################
 sub getVar{	#gets a stored variable from the session
 	my($self, $name) = @_;
-	$self->_readOrCreate();
 	if(defined($self->{'vars'}->{$name})){
 		return $self->{'vars'}->{$name};
 	}

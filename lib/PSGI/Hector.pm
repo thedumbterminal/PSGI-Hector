@@ -40,7 +40,7 @@ use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.4";
+our $VERSION = "1.5";
 #########################################################
 
 =head2 init(\%options)
@@ -91,11 +91,6 @@ sub new{
 		my $self = $class->SUPER::new();
 		$self->{'_env'} = $env;
 		$self->{'_options'} = $options;
-		my $sessionClass = $self->__getFullClassName("Session");
-		if($self->getOption('sessionClass')){
-			$sessionClass = $self->getOption('sessionClass');
-		}
-		$self->{'_session'} = $sessionClass->new($self);	
 		my $requestClass = $self->__getFullClassName("Request");
 		if($self->getOption('requestClass')){
 			$requestClass = $self->getOption('requestClass');
@@ -146,6 +141,13 @@ Returns an instance of the L<PSGI::Hector::Session> object.
 ###########################################################
 sub getSession{
 	my $self = shift;
+	if(!$self->{'_session'}){
+		my $sessionClass = $self->__getFullClassName("Session");
+		if($self->getOption('sessionClass')){
+			$sessionClass = $self->getOption('sessionClass');
+		}
+		$self->{'_session'} = $sessionClass->new($self);		
+	}
 	return $self->{'_session'};
 }
 #########################################################
@@ -350,8 +352,6 @@ sub _init{	#things to do when this object is created
 	if(!defined($self->getOption('checkReferer')) || $self->getOption('checkReferer')){	#check the referer by default
 		$self->_checkReferer();	#check this first
 	}
-	my $response = $self->getResponse();
-	my $session = $self->getSession();
 	return 1;
 }
 ###########################################################

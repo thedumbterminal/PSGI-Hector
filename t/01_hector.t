@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 12);
+plan(tests => 13);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
@@ -31,6 +31,9 @@ isa_ok($h, "PSGI::Hector");
 #3
 my $response = $h->getResponse();
 isa_ok($response, "PSGI::Hector::Response::Raw");
+
+#4
+is($h->{'_session'}, undef, "Session not created until requested");
 
 #4
 my $session = $h->getSession();

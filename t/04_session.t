@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 4);
+plan(tests => 2);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
@@ -28,21 +28,5 @@ isa_ok($session, "PSGI::Hector::Session");
 #2
 {
 	my $response = $m->getResponse();
-	is($response->header("Set-Cookie"), undef, "New session not created on new()")
-}
-
-#3
-{
-	$session = PSGI::Hector::Session->new($m);
-	$session->setVar("a", "b");
-	my $response = $m->getResponse();
-	like($response->header("Set-Cookie"), qr/^SESSION=[A-Z]{2}[a-f0-9]+/, "New session created on setVar()")
-}
-
-#4
-{
-	$session = PSGI::Hector::Session->new($m);
-	$session->getVar("a");
-	my $response = $m->getResponse();
-	like($response->header("Set-Cookie"), qr/^SESSION=[A-Z]{2}[a-f0-9]+/, "New session created on getVar()")
+	like($response->header("Set-Cookie"), qr/^SESSION=[A-Z]{2}[a-f0-9]+/, "New session created on new()")
 }

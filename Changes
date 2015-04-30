@@ -1,3 +1,7 @@
+PSGI::Hector 1.5 --
+
+	Fixed recursion bug for session variables.
+
 PSGI::Hector 1.4 -- 27/12/2014
 
 	Deprecated getThisUrl()
