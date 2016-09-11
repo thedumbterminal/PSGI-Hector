@@ -1,5 +1,7 @@
 # PSGI::Hector
 
+[![Build Status](https://travis-ci.org/thedumbterminal/PSGI-Hector.svg?branch=master)](https://travis-ci.org/thedumbterminal/PSGI-Hector)
+
 Simple web framework based on PSGI.
 
 For a simple example:
