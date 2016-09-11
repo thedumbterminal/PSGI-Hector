@@ -40,7 +40,7 @@ use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.5";
+our $VERSION = "1.6";
 #########################################################
 
 =head2 init(\%options)

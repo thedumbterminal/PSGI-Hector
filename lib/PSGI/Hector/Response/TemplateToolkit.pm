@@ -18,6 +18,8 @@ This view plugin allows you to read a template file and replace placholders with
 
 With this class you can specify empty Hector actions to just display a static page.
 
+The display() can additionally be called by a controller action multiple times if several different templates need to be output.
+
 =head1 METHODS
 
 =cut
@@ -104,7 +106,8 @@ sub display{	#this sub will display the page headers if needed
 		$self->setError("No template defined");
 	}
 	if($self->_getDisplayedHeader()){	#just display more content
-		return $self->_getContent();	#get the contents of the template
+		my $content = $self->_getContent();	#get the contents of the template
+		$self->add_content_utf8($content);
 	}
 	else{	#first output so display any headers
 		if($self->header("Location")){
@@ -122,11 +125,11 @@ sub display{	#this sub will display the page headers if needed
 			$self->code(500);
 			$self->message('Internal Server Error');
 		}
+		$self->_setDisplayedHeader();	#we wont display the header again
 	}
 	if($self->getError()){
 		$self->getHector()->log($self->getError());	#just log it so we have a record of this
 	}
-	$self->_setDisplayedHeader();	#we wont display the header again
 	return $self->SUPER::display();
 }
 #########################################################

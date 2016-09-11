@@ -27,7 +27,8 @@ my $build = Module::Build->new(
 		"Plack::Middleware::ReverseProxyPath" => 0
 	},
 	build_requires => {
-		"Test::More" => 0
+		"Test::More" => 0,
+		"Test::MockModule" => 0
 	},
 	create_makefile_pl => 'traditional',
 	meta_merge => {
