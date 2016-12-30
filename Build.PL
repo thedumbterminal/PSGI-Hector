@@ -12,7 +12,6 @@ my $build = Module::Build->new(
 		"HTTP::Response" => 0,
 		"Plack" => 0,
 		"Hash::MultiValue" => 0,
-		"Carp" => 0,
 		"File::Basename" => 0,
 		"Data::Dumper" => 0,
 		"Template" => 0,

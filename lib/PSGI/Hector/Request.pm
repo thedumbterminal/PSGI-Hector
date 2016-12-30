@@ -22,7 +22,6 @@ Class to deal with the current page request
 
 use strict;
 use warnings;
-use Carp;
 use Data::Dumper;
 use parent qw(Plack::Request);
 #########################################################
@@ -87,7 +86,7 @@ sub validate{	#checks %form againist the hash rules
 		}
 	}
 	else{
-		confess("No rules to validate form");
+		die("No rules to validate form");
 	}
 	return($result, \@errors);
 }

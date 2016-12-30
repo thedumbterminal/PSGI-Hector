@@ -1,3 +1,7 @@
+PSGI::Hector 1.7 -- 30/12/2016
+
+	No longer using confess().
+
 PSGI::Hector 1.6 -- 11/09/2016
 
 	Fixed template toolkit response when calling display() more than once.

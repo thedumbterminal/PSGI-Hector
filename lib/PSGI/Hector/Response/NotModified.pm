@@ -22,7 +22,6 @@ has a copy of the page already.
 
 use strict;
 use warnings;
-use Carp;
 use parent qw(PSGI::Hector::Response::Base);
 #########################################################
 

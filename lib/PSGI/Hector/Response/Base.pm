@@ -29,13 +29,12 @@ The module L<PSGI::Hector::Response> will load the specified response plugin on 
 
 use strict;
 use warnings;
-use Carp;
 use parent qw(HTTP::Response PSGI::Hector::Base PSGI::Hector::Log);
 #########################################################
 sub new{
 	my($class, $hector) = @_;
 	if(!defined($hector)){
-		confess("No hector object given");
+		die("No hector object given");
 	}
 	my $self = $class->SUPER::new(200, "OK");	#we dont care about the code or msg as they get removed later
 	$self->{'_hector'} = $hector;	#so we can access the hector object FIXME

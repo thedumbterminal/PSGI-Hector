@@ -2,6 +2,9 @@
 #plackup script/hector_hello.psgi
 use strict;
 use warnings;
+use FindBin;
+use local::lib "$FindBin::Bin/local/lib/perl5";
+print $FindBin::Bin;
 use lib qw(lib);
 use PSGI::Hector::Middleware;
 

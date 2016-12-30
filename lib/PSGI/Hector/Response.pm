@@ -19,7 +19,6 @@ Factory class for creating response objects.
 
 use strict;
 use warnings;
-use Carp;
 #########################################################
 
 =pod
@@ -43,11 +42,11 @@ sub new{
 			return $self;			
 		}
 		else{
-			confess("Plugin load problem: $@");
+			die("Plugin load problem: $@");
 		}
 	}
 	else{
-		confess("No plugin given");
+		die("No plugin given");
 	}
 	return undef;
 }

@@ -33,14 +33,13 @@ everything you need.
 
 use strict;
 use warnings;
-use Carp;
 use File::Basename;
 use Class::Load qw(is_class_loaded);
 use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.6";
+our $VERSION = "1.7";
 #########################################################
 
 =head2 init(\%options)
@@ -104,7 +103,7 @@ sub new{
 		return $self;
 	}
 	else{
-		confess("No response plugin option provided");
+		die("No response plugin option provided");
 	}
 	return undef;
 }
@@ -167,7 +166,7 @@ sub getRequest{
 	my $self = shift;
 	my $request = $self->{'_request'};
 	if(!$request){
-		confess("No request object found");
+		die("No request object found");
 	}
 	return $request;
 }
@@ -382,16 +381,16 @@ sub _setOption{
 }
 ##########################################################
 sub _getScriptName{ #returns the basename of the running script
-    my $self = shift;
-    my $env = $self->getEnv();
-    my $scriptName = $env->{'REQUEST_URI'};
-    if($scriptName){
-        return basename($scriptName);
-    }
-    else {
-        confess("Cant find scriptname, are you running a CGI");
-    }
-    return undef;
+	my $self = shift;
+	my $env = $self->getEnv();
+	my $scriptName = $env->{'REQUEST_URI'};
+	if($scriptName){
+		return basename($scriptName);
+	}
+	else{
+		die("Cant find scriptname, are you running a CGI");
+	}
+	return undef;
 }
 ###########################################################
 
