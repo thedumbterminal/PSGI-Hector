@@ -208,7 +208,7 @@ sub _getContent{
 	);
 	if($tt){
 		if(!$self->getError()){
-			my $result = $tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content)){
+			my $result = $tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content);
 			unless($result){
 				$self->setError($tt->error());
 			}
