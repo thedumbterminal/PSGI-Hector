@@ -20,18 +20,19 @@ use warnings;
 
 =pod
 
-=head2 log($message)
+=head2 log($message, $severity)
 
-	$h->log($message);
+	$h->log('Just testing', 'info');
 
-Logs the provided string to STDERR.
+Logs the provided string to STDERR with a prefixed severity.
 
 =cut
 
 ###########################################################
 sub log{	#a simple way to log a message to the apache error log
-	my($self, $message) = @_;
-	print STDERR $message . "\n";
+	my($self, $message, $severity) = @_;
+	$severity = "" unless $severity;
+	print STDERR uc($severity) . " - " . $message . "\n";
 	return 1;
 }
 #################################################

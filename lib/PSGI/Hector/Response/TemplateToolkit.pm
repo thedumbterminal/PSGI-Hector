@@ -208,7 +208,8 @@ sub _getContent{
 	);
 	if($tt){
 		if(!$self->getError()){
-			if(!$tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content)){
+			my $result = $tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content)){
+			unless($result){
 				$self->setError($tt->error());
 			}
 		}
@@ -217,8 +218,10 @@ sub _getContent{
 		$self->setError($Template::ERROR);
 	}
 	if($self->getError()){	#_parseFile may have errored
-		$self->setTemplateVar('message', $self->getError());
-		$tt->process("genericerror.html", $self->_getTemplateVars(), \$content);
+		my $result = $tt->process("genericerror.html", $self->_getTemplateVars(), \$content);
+		unless($result){
+			$self->log($tt->error(), 'error');
+		}
 	}
 	return $content;
 }
