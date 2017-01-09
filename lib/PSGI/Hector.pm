@@ -39,7 +39,7 @@ use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.7";
+our $VERSION = "1.8";
 #########################################################
 
 =head2 init(\%options)
@@ -265,11 +265,9 @@ sub run{	#run the code for the given action
 	my $self = shift;
 	my $response = $self->getResponse();
 	if($response->code() != 304){	#need to do something
-		$self->log("Need to run action sub");
+		$self->log("Need to run action sub", 'debug');
 		my $action = $self->getAction();	
-		if($self->getOption('debug')){
-			$self->log("Using action: '$action'");
-		}
+		$self->log("Using action: '$action'", 'debug');
 		my $subName = "handle" . ucfirst($action);	#add prefix for security
 		my $class = ref($self);
 		if($class->can($subName)){	#default action sub exists

@@ -32,8 +32,8 @@ Logs the provided string to STDERR with a prefixed severity.
 sub log{	#a simple way to log a message to the apache error log
 	my($self, $message, $severity) = @_;
 	$severity = "" unless $severity;
+	return if !$self->getOption('debug') and $severity eq 'debug';	#ignore debug messages when not in debug mode
 	print STDERR uc($severity) . " - " . $message . "\n";
-	return 1;
 }
 #################################################
 

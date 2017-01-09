@@ -28,7 +28,8 @@ my $build = Module::Build->new(
 	build_requires => {
 		"Test::More" => 0,
 		"Test::MockModule" => 0,
-		"Test::Output" => 0
+		"Test::Output" => 0,
+		"Mock::Sub" => 0
 	},
 	create_makefile_pl => 'traditional',
 	meta_merge => {
