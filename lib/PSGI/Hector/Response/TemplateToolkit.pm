@@ -128,7 +128,7 @@ sub display{	#this sub will display the page headers if needed
 		$self->_setDisplayedHeader();	#we wont display the header again
 	}
 	if($self->getError()){
-		$self->getHector()->log($self->getError());	#just log it so we have a record of this
+		$self->getHector()->log($self->getError(), 'error');	#just log it so we have a record of this
 	}
 	return $self->SUPER::display();
 }
@@ -208,7 +208,8 @@ sub _getContent{
 	);
 	if($tt){
 		if(!$self->getError()){
-			if(!$tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content)){
+			my $result = $tt->process($self->getTemplate() . ".html", $self->_getTemplateVars(), \$content);
+			unless($result){
 				$self->setError($tt->error());
 			}
 		}
@@ -217,8 +218,10 @@ sub _getContent{
 		$self->setError($Template::ERROR);
 	}
 	if($self->getError()){	#_parseFile may have errored
-		$self->setTemplateVar('message', $self->getError());
-		$tt->process("genericerror.html", $self->_getTemplateVars(), \$content);
+		my $result = $tt->process("genericerror.html", $self->_getTemplateVars(), \$content);
+		unless($result){
+			$self->getHector()->log($tt->error(), 'error');
+		}
 	}
 	return $content;
 }

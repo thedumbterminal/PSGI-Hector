@@ -27,7 +27,7 @@ use Digest::MD5;
 use Data::Dumper;
 use CGI::Simple::Cookie;
 use File::Spec;
-use parent qw(PSGI::Hector::Base PSGI::Hector::Log);
+use parent qw(PSGI::Hector::Base);
 our $prefix = "HT";
 our $path = "/tmp";
 ##############################################################################################################################
@@ -55,15 +55,15 @@ sub validate{	#runs the defined sub to see if this sesion is validate
 				return 1;
 			}
 			else{
-				$self->log("Session " . $self->getVar('scriptPath') . " <> " . $env->{'SCRIPT_NAME'});
+				$self->_getHector()->log("Session " . $self->getVar('scriptPath') . " <> " . $env->{'SCRIPT_NAME'}, 'debug');
 			}
 		}
 		else{
-			$self->log("Session " . $self->getVar('remoteIp') . " <> " . $env->{'REMOTE_ADDR'});
+			$self->_getHector()->log("Session " . $self->getVar('remoteIp') . " <> " . $env->{'REMOTE_ADDR'}, 'debug');
 		}
 	}
 	else{
-		$self->log("Session has no remote IP");
+		$self->_getHector()->log("Session has no remote IP", 'debug');
 	}
 	return 0;
 }
@@ -208,7 +208,7 @@ sub delete{	#remove a session
 			my $path = $self->_getPath();
 			my $sessionFile = File::Spec->catfile($path, $sessionId);
 			if(unlink($sessionFile)){
-				$self->log("Deleted session: $sessionId");
+				$self->_getHector()->log("Deleted session: $sessionId", 'debug');
 				my $cookie = $self->_setCookie(EXPIRE => 'now');
 				$response->header("Set-Cookie" , => $cookie);
 				$self = undef;	#destroy this object
@@ -336,10 +336,10 @@ sub _getPath{	#this should be a config option
 sub _readOrCreate{
 	my $self = shift;
 	if($self->read() && $self->validate()){
-		$self->log("Existing session: " . $self->getId());
+		$self->_getHector()->log("Existing session: " . $self->getId(), 'debug');
 	}
 	elsif($self->create()){	#start a new session
-		$self->log("Created new session: " . $self->getId());
+		$self->_getHector()->log("Created new session: " . $self->getId(), 'debug');
 	}
 }
 #####################################################################################################################

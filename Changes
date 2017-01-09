@@ -1,6 +1,12 @@
+PSGI::Hector 1.8 -- 09/01/2017
+
+	Now allowing different log levels.
+
+
 PSGI::Hector 1.7 -- 30/12/2016
 
 	No longer using confess().
+
 
 PSGI::Hector 1.6 -- 11/09/2016
 
