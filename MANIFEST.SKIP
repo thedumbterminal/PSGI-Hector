@@ -79,4 +79,7 @@
 #avoid own docs
 how_to_release.txt
 
+#avoid ci files
+.travis.yml
+
 \B\.svn\b
