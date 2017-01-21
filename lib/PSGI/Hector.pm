@@ -35,11 +35,12 @@ use strict;
 use warnings;
 use File::Basename;
 use Class::Load qw(is_class_loaded);
-use parent qw(PSGI::Hector::Base PSGI::Hector::Utils PSGI::Hector::Log);
+use parent qw(PSGI::Hector::Base PSGI::Hector::Utils);
 use PSGI::Hector::Response;
 use PSGI::Hector::Session;	#for session management
 use PSGI::Hector::Request;
-our $VERSION = "1.8";
+use PSGI::Hector::Log;
+our $VERSION = "1.9";
 #########################################################
 
 =head2 init(\%options)
@@ -99,6 +100,9 @@ sub new{
 		}
 		$self->{'_request'} = $requestClass->new($env);
 		$self->{'_response'} = PSGI::Hector::Response->new($self, $self->getOption('responsePlugin'));	#this could need access to a request object	
+		$self->{'_log'} = PSGI::Hector::Log->new({
+			'debug' => $self->getOption('debug')
+		});
 		$self->_init();	#perform initial setup
 		return $self;
 	}
@@ -115,7 +119,7 @@ sub new{
 
 	my $response = $h->getResponse();
 
-Returns an instance of the response plugin object, previously defined in the constructor options.
+Returns the current instance of the response plugin object, previously defined in the constructor options.
 See L<PSGI::Hector::Response> for more details.
 
 =cut
@@ -133,7 +137,7 @@ sub getResponse{
 
 	my $session = $h->getSession();
 
-Returns an instance of the L<PSGI::Hector::Session> object.
+Returns the current instance of the L<PSGI::Hector::Session> object.
 
 =cut
 
@@ -157,7 +161,7 @@ sub getSession{
 
 	my $request = $h->getRequest();
 
-Returns an instance of the L<PSGI::Hector::Request> object.
+Returns the current instance of the L<PSGI::Hector::Request> object.
 
 =cut
 
@@ -169,6 +173,22 @@ sub getRequest{
 		die("No request object found");
 	}
 	return $request;
+}
+#########################################################
+
+=pod
+
+=head2 getLog()
+
+	my $logger = $h->getLog();
+
+returns an current instance of the L<PSGI::Hector::Log> object.
+
+=cut
+
+#########################################################
+sub getLog{
+	return shift->{'_log'};
 }
 #########################################################
 
@@ -265,9 +285,9 @@ sub run{	#run the code for the given action
 	my $self = shift;
 	my $response = $self->getResponse();
 	if($response->code() != 304){	#need to do something
-		$self->log("Need to run action sub", 'debug');
+		$self->getLog()->log("Need to run action sub", 'debug');
 		my $action = $self->getAction();	
-		$self->log("Using action: '$action'", 'debug');
+		$self->getLog()->log("Using action: '$action'", 'debug');
 		my $subName = "handle" . ucfirst($action);	#add prefix for security
 		my $class = ref($self);
 		if($class->can($subName)){	#default action sub exists
@@ -467,7 +487,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2014 MacGyveR. All rights reserved.
+Copyright (c) 2017 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

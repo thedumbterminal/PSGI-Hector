@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 13);
+plan(tests => 14);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
@@ -35,38 +35,42 @@ isa_ok($response, "PSGI::Hector::Response::Raw");
 #4
 is($h->{'_session'}, undef, "Session not created until requested");
 
-#4
+#5
 my $session = $h->getSession();
 isa_ok($session, "PSGI::Hector::Session");
 
-#5
+#6
 my $request = $h->getRequest();
 isa_ok($request, "PSGI::Hector::Request");
 
-#6
+#7
 is($h->getSiteUrl(), "http://www.test.com:8080/test.cgi", "PSGI::Hector::Utils::getSiteUrl()");
 
-#7
+#8
 is($h->getThisUrl(), "http://www.test.com:8080/test.cgi", "PSGI::Hector::Utils::getThisUrl()");
 
-#8
+#9
 is($h->getOption('debug'), 1, "PSGI::Hector::getOption()");
 
-#9
+#10
 {
 	my $env = $h->getEnv();
 	is($env{'REQUEST_METHOD'}, "GET", "PSGI::Hector::getEnv()");
 }
 
-#10
+#11
 is($h->getUrlForAction("someAction", "a=b&c=d"), "/someAction?a=b&c=d", "PSGI::Hector::getUrlForAction()");
 
-#11
+#12
 is($h->getFullUrlForAction("someAction", "a=b&c=d"), "http://www.test.com:8080/test.cgi/someAction?a=b&c=d", "PSGI::Hector::getFullUrlForAction()");
 
-#12
+#13
 {
 	$h = PSGI::Hector->new($options, \%env);
 	my $response = $h->getResponse();
 	is($response->header("Set-Cookie"), undef, "New session not created on new()")
 }
+
+#14
+my $logger = $h->getLog();
+isa_ok($logger, 'PSGI::Hector::Log');

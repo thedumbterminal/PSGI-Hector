@@ -55,15 +55,15 @@ sub validate{	#runs the defined sub to see if this sesion is validate
 				return 1;
 			}
 			else{
-				$self->_getHector()->log("Session " . $self->getVar('scriptPath') . " <> " . $env->{'SCRIPT_NAME'}, 'debug');
+				$self->_getHector()->getLog()->log("Session " . $self->getVar('scriptPath') . " <> " . $env->{'SCRIPT_NAME'}, 'debug');
 			}
 		}
 		else{
-			$self->_getHector()->log("Session " . $self->getVar('remoteIp') . " <> " . $env->{'REMOTE_ADDR'}, 'debug');
+			$self->_getHector()->getLog()->log("Session " . $self->getVar('remoteIp') . " <> " . $env->{'REMOTE_ADDR'}, 'debug');
 		}
 	}
 	else{
-		$self->_getHector()->log("Session has no remote IP", 'debug');
+		$self->_getHector()->getLog()->log("Session has no remote IP", 'debug');
 	}
 	return 0;
 }
@@ -208,7 +208,7 @@ sub delete{	#remove a session
 			my $path = $self->_getPath();
 			my $sessionFile = File::Spec->catfile($path, $sessionId);
 			if(unlink($sessionFile)){
-				$self->_getHector()->log("Deleted session: $sessionId", 'debug');
+				$self->_getHector()->getLog()->log("Deleted session: $sessionId", 'debug');
 				my $cookie = $self->_setCookie(EXPIRE => 'now');
 				$response->header("Set-Cookie" , => $cookie);
 				$self = undef;	#destroy this object
@@ -336,10 +336,10 @@ sub _getPath{	#this should be a config option
 sub _readOrCreate{
 	my $self = shift;
 	if($self->read() && $self->validate()){
-		$self->_getHector()->log("Existing session: " . $self->getId(), 'debug');
+		$self->_getHector()->getLog()->log("Existing session: " . $self->getId(), 'debug');
 	}
 	elsif($self->create()){	#start a new session
-		$self->_getHector()->log("Created new session: " . $self->getId(), 'debug');
+		$self->_getHector()->getLog()->log("Created new session: " . $self->getId(), 'debug');
 	}
 }
 #####################################################################################################################
@@ -358,7 +358,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2014 MacGyveR. All rights reserved.
+Copyright (c) 2017 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

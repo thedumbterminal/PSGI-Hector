@@ -27,7 +27,7 @@ use warnings;
 
 Constructor, a factory method that will return an instance of the requested response plugin.
 
-If the response is not modified from the client's provided Etag header an instance of <LPSGI::Hector::Response::NotModified>
+If the response is not modified from the client's provided Etag header an instance of L<PSGI::Hector::Response::NotModified>
 will be returned instead.
 
 =cut
@@ -65,7 +65,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2014 MacGyveR. All rights reserved.
+Copyright (c) 2017 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

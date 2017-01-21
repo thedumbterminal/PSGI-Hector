@@ -128,7 +128,7 @@ sub display{	#this sub will display the page headers if needed
 		$self->_setDisplayedHeader();	#we wont display the header again
 	}
 	if($self->getError()){
-		$self->getHector()->log($self->getError(), 'error');	#just log it so we have a record of this
+		$self->getHector()->getLog()->log($self->getError(), 'error');	#just log it so we have a record of this
 	}
 	return $self->SUPER::display();
 }
@@ -220,7 +220,7 @@ sub _getContent{
 	if($self->getError()){	#_parseFile may have errored
 		my $result = $tt->process("genericerror.html", $self->_getTemplateVars(), \$content);
 		unless($result){
-			$self->getHector()->log($tt->error(), 'error');
+			$self->getHector()->getLog()->log($tt->error(), 'error');
 		}
 	}
 	return $content;
@@ -264,7 +264,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2014 MacGyveR. All rights reserved.
+Copyright (c) 2017 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

@@ -1,3 +1,8 @@
+PSGI::Hector 1.9 -- 21/01/2017
+
+	The logging functions are now exposed so can be used by other parts of the web app.
+
+
 PSGI::Hector 1.8 -- 09/01/2017
 
 	Now allowing different log levels.

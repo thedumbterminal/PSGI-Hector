@@ -103,7 +103,7 @@ L<Plack::Middleware::Static::Minifier> L<Plack::Middleware::Static> L<Plack::Mid
 
 =head1 Copyright
 
-Copyright (c) 2014 MacGyveR. All rights reserved.
+Copyright (c) 2017 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
