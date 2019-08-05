@@ -1,5 +1,7 @@
 sudo: false
 language: perl
+perl:
+  - "5.22"
 cache:
   directories:
   - perl_modules
