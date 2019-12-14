@@ -125,7 +125,7 @@ The value is decrypted before being returned.
 ###########################################################
 sub getSecretVar{
 	my($self, $name) = @_;
-	my $encrypted = self->getVar($name);
+	my $encrypted = $self->getVar($name);
 	decrypt($encrypted);
 }
 ###########################################################################################################################
@@ -186,8 +186,7 @@ sub delete{	#remove a session
 #private class method
 ###############################################################################################################
 sub _getHector{
-	my $self = shift;
-	return $self->{'_hector'};
+	shift->{'_hector'};
 }
 ###########################################################################################################################
 sub _setId{
@@ -250,16 +249,15 @@ sub _validate{	#runs the defined sub to see if this sesion is validate
 		return 0;
 	}	
 	my $env = $self->_getHector()->getEnv();
-	if($sessionIp eq $env->{'REMOTE_ADDR'}){
-		return 1;
+	if($sessionIp ne $env->{'REMOTE_ADDR'}){
+		$self->_getHector()->getLog()->log("Session " . $sessionIp . " <> " . $env->{'REMOTE_ADDR'}, 'debug');
+		return 0;
 	}
-	$self->_getHector()->getLog()->log("Session " . $sessionIp . " <> " . $env->{'REMOTE_ADDR'}, 'debug');
-	return 0;
+	return 1;
 }
 ##############################################################################################################
 sub _create{	#creates a server-side cookie for the session
 	my $self = shift;
-	my $result = 0;
 	$self->setError("");	#as we are starting a new session we clear any previous errors first
 	my $sessionId = time() * $$;	#time in seconds * process id
 	my $ctx = Digest::MD5->new;
@@ -274,9 +272,9 @@ sub _create{	#creates a server-side cookie for the session
 		my $cookie = $self->_setCookie(VALUE => $self->getId());
 		my $response = $self->_getHector()->getResponse();
 		$response->header("Set-Cookie" => $cookie);
-		$result = 1;
+		return 1;
 	}
-	$result;
+	return 0;
 }
 ##############################################################################################################
 sub _read{	#read an existing session
@@ -338,8 +336,7 @@ sub _write{	#writes a server-side cookie for the session
 		else{$self->setError("Cant write session: $!");}
 	}
 	else{$self->setError('Session ID invalid');}
-	if($self->getError()){return 0;}
-	else{return 1;}
+	return ($self->getError() ? 0 : 1)
 }
 ##########################################################################################################################
 sub _storeVar{	#stores a variable in the session
