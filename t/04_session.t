@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-plan(tests => 4);
+plan(tests => 5);
 use lib qw(../lib lib);
 use PSGI::Hector;
 
@@ -41,4 +41,9 @@ isa_ok($session, "PSGI::Hector::Session");
 {
 	$env{'REMOTE_ADDR'} = '8.8.8.8';
 	ok(!$session->_validate(), 'Does not validate with an different remote IP');
+}
+
+#5
+{
+	ok($session->delete(), 'delete()');
 }

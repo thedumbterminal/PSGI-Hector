@@ -3,6 +3,7 @@ PSGI::Hector 2.0 -- 14/12/2019
 	Breaking changes to the session handling, directly reading or creating sessions is no longer supported.
 	Sessions can now be shared between apps/mount points on the same domain.
 	Encrypted session storage now supported.
+	Session deletion fixed.
 
 
 PSGI::Hector 1.91 -- 05/08/2019

@@ -28,7 +28,6 @@ use Data::Dumper;
 use CGI::Simple::Cookie;
 use File::Spec;
 use Crypt::Simple;
-use parent qw(PSGI::Hector::Base);
 our $prefix = "HT";
 our $path = "/tmp";
 ##############################################################################################################
@@ -46,11 +45,12 @@ The correct Set-Cookie header will be issued through the provided L<PSGI::Hector
 ##############################################################################################################################
 sub new{	#constructor
 	my($class, $hector) = @_;
-	my $self = $class->SUPER::new();
-	$self->{'_hector'} = $hector;
-	$self->{'id'} = undef;
-	$self->{'error'} = "";
-	$self->{'vars'} = {};
+	my $self = {
+		'_hector' => $hector,
+		'id' => undef,
+		'vars' => {}
+	};
+	bless $self, $class;
 	$self->_readOrCreate();
 	return $self;
 }
@@ -129,16 +129,6 @@ sub getSecretVar{
 	decrypt($encrypted);
 }
 ###########################################################################################################################
-sub setError{
-	my($self, $error) = @_;
-	$self->{'error'} = $error;	#save the error
-	return 1;
-}
-###########################################################################################################################
-sub getError{	#returns the last error
-	shift->{'error'};
-}
-###########################################################################################################################
 sub getId{	#returns the session id
 	shift->{'id'};
 }
@@ -154,33 +144,20 @@ Remove the current session from memory, disk and expire it in the browser.
 
 ###########################################################################################
 sub delete{	#remove a session
-	my($self, $response) = @_;
-	my $result = 0;
-	if($response){
-		my $sessionId = $self->getId();
-		my $prefix = $self->_getPrefix();
-		if($sessionId =~ m/^$prefix[a-f0-9]+$/){	#id valid
-			my $path = $self->_getPath();
-			my $sessionFile = File::Spec->catfile($path, $sessionId);
-			if(unlink($sessionFile)){
-				$self->_getHector()->getLog()->log("Deleted session: $sessionId", 'debug');
-				my $cookie = $self->_setCookie(EXPIRE => 'now');
-				$response->header("Set-Cookie" , => $cookie);
-				$self = undef;	#destroy this object
-				$result = 1;
-			}
-			else{
-				$self->setError("Could not delete session");
-			}
-		}
-		else{
-			$self->setError("Session ID invalid: $sessionId");
-		}
-	}
-	else{
-		$self->setError("No response given");
-	}
-	$result;
+	my($self) = shift;
+	my $sessionId = $self->getId();
+	die("Session ID invalid: $sessionId") unless $self->_isIdValid($sessionId);
+
+	my $path = $self->_getPath();
+	my $sessionFile = File::Spec->catfile($path, $sessionId);
+	die("Could not delete session") unless unlink($sessionFile);
+
+	$self->_getHector()->getLog()->log("Deleted session: $sessionId", 'debug');
+	my $cookie = $self->_setCookie(VALUE => $sessionId, EXPIRE => 'now');
+	my $response = $self->_getHector()->getResponse();
+	$response->header("Set-Cookie" => $cookie);
+	$self = undef;	#destroy this object
+	return 1;
 }
 ###############################################################################################################
 #private class method
@@ -210,13 +187,9 @@ sub _setCookie{
 		-httponly => 1,
 		-secure => $secure
 	);
-	if($cookie){
-		return $cookie->as_string();
-	}
-	else{
-		$self->setError("Can't create cookie");
-	}
-	return undef;
+	die("Can't create cookie") unless $cookie;
+	
+	return $cookie->as_string();
 }
 ##############################################################################################################
 sub _expire{	#remove old session files
@@ -225,10 +198,9 @@ sub _expire{	#remove old session files
 	if(opendir(COOKIES, $path)){
 		my @sessions = readdir(COOKIES);
 		my $expire = (time - 86400);
-		foreach(@sessions){	#check each of the cookies
-			my $prefix = $self->_getPrefix();
-			if($_ =~ m/^($prefix[a-f0-9]+)$/){	#found a cookie file
-				my $sessionFile = File::Spec->catfile($path, $1);
+		foreach my $id (@sessions){	#check each of the cookies
+			if($self->_isIdValid($id)){	#found a cookie file
+				my $sessionFile = File::Spec->catfile($path, $id);
 				my @stat = stat($sessionFile);
 				if(defined($stat[9]) && $stat[9] < $expire){	#cookie is more than a day old, so remove it
 					unlink $sessionFile;
@@ -258,7 +230,6 @@ sub _validate{	#runs the defined sub to see if this sesion is validate
 ##############################################################################################################
 sub _create{	#creates a server-side cookie for the session
 	my $self = shift;
-	$self->setError("");	#as we are starting a new session we clear any previous errors first
 	my $sessionId = time() * $$;	#time in seconds * process id
 	my $ctx = Digest::MD5->new;
 	$ctx->add($sessionId);
@@ -266,77 +237,63 @@ sub _create{	#creates a server-side cookie for the session
 	$self->_setId($sessionId);	#remember the session id
 	my $env = $self->_getHector()->getEnv();
 	#set some initial values
-	$self->_storeVar('remoteIp', $env->{'REMOTE_ADDR'});
-	$self->_storeVar('scriptPath', $env->{'SCRIPT_NAME'});
-	if(!$self->getError()){	#all ok so far
-		my $cookie = $self->_setCookie(VALUE => $self->getId());
-		my $response = $self->_getHector()->getResponse();
-		$response->header("Set-Cookie" => $cookie);
-		return 1;
-	}
-	return 0;
+	$self->setVar('remoteIp', $env->{'REMOTE_ADDR'});
+	$self->setVar('scriptPath', $env->{'SCRIPT_NAME'});
+	my $cookie = $self->_setCookie(VALUE => $self->getId());
+	my $response = $self->_getHector()->getResponse();
+	$response->header("Set-Cookie" => $cookie);
+	return 1;
 }
 ##############################################################################################################
 sub _read{	#read an existing session
 	my $self = shift;
 	my $result = 0;
 	my $sessionId = $self->_getHector()->getRequest()->getCookie("SESSION");	#get the session id from the browser
-	if(defined($sessionId)){	#got a sessionid of some sort
-		my $prefix = $self->_getPrefix();
-		if($sessionId =~ m/^($prefix[a-f0-9]+)$/){	#filename valid
-			my $path = $self->_getPath();
-			my $sessionFile = File::Spec->catfile($path, $1);
-			if(open(SSIDE, "<", $sessionFile)){	#try to open the session file
-				my $contents = "";
-				while(<SSIDE>){	#read each line of the file
-					$contents .= $_;
-				}
-				close(SSIDE);
-				if($contents =~ m/^(\$VAR1 = \{.+\};)$/m){	#check session contents
-					my $validContents = $1; #untaint variable
-					my $VAR1;	#the session contents var
-					{
-						eval $validContents;
-					}
-					$self->{'vars'} = $VAR1;
-					$result = 1;
-					$self->_setId($sessionId);	#remember the session id
-				}
-				else{
-					$self->setError("Session contents invalid");
-				}
-			}
-			else{
-				$self->setError("Cant open session file: $sessionFile: $!");
-			}
-		}
-		else{
-			$self->setError("Session ID invalid: $sessionId");
-		}
+	return 0 unless defined($sessionId);	#got a sessionid of some sort
+
+	return 0 unless $self->_isIdValid($sessionId);	#filename valid
+
+	my $path = $self->_getPath();
+	my $sessionFile = File::Spec->catfile($path, $sessionId);
+	return 0 unless open(SSIDE, "<", $sessionFile);	#try to open the session file
+
+	my $contents = "";
+	while(<SSIDE>){	#read each line of the file
+		$contents .= $_;
 	}
-	return $result;
+	close(SSIDE);
+	unless($contents =~ m/^(\$VAR1 = \{.+\};)$/m){	#check session contents
+		$self->_getHector()->getLog()->log('Session contents invalid', 'warn');
+		return 0;
+	}
+	
+	my $validContents = $1; #untaint variable
+	my $VAR1;	#the session contents var
+	{
+		eval $validContents;
+	}
+	$self->{'vars'} = $VAR1;
+	$self->_setId($sessionId);	#remember the session id
+	return 1;
 }
 ###########################################################################################
 sub _write{	#writes a server-side cookie for the session
 	my $self = shift;
-	my $prefix = $self->_getPrefix();
-	if($self->getId() =~ m/^($prefix[a-f0-9]+)$/){	#filename valid
-		my $path = $self->_getPath();
-		my $sessionFile = File::Spec->catfile($path, $1);
-		if(open(SSIDE, ">", $sessionFile)){
-			$Data::Dumper::Freezer = 'freeze';
-			$Data::Dumper::Toaster = 'toast';
-			$Data::Dumper::Indent = 0;	#turn off formatting
-			my $dump = Dumper $self->{'vars'};
-			if($dump){	#if we have any data
-				print SSIDE $dump;
-			}
-			close(SSIDE);
-		}
-		else{$self->setError("Cant write session: $!");}
+	my $sessionId = $self->getId();
+	die('Session ID invalid') unless $self->_isIdValid($sessionId);	#filename valid
+
+	my $sessionFile = File::Spec->catfile($self->_getPath(), $sessionId);
+	die("Cant write session: $!") unless open(SSIDE, ">", $sessionFile);
+	
+	$Data::Dumper::Freezer = 'freeze';
+	$Data::Dumper::Toaster = 'toast';
+	$Data::Dumper::Indent = 0;	#turn off formatting
+	my $dump = Dumper $self->{'vars'};
+	if($dump){	#if we have any data
+		print SSIDE $dump;
 	}
-	else{$self->setError('Session ID invalid');}
-	return ($self->getError() ? 0 : 1)
+	close(SSIDE);
+	return 1;
 }
 ##########################################################################################################################
 sub _storeVar{	#stores a variable in the session
@@ -371,6 +328,12 @@ sub _readOrCreate{
 		$self->_getHector()->getLog()->log("Created new session: " . $self->getId(), 'debug');
 	}
 }
+#######################################################################################################
+sub _isIdValid{
+	my($self, $id) = @_;
+	my $prefix = $self->_getPrefix();
+	$id =~ m/^($prefix[a-f0-9]+)$/;
+}
 #####################################################################################################################
 
 =pod
@@ -387,7 +350,7 @@ Development questions, bug reports, and patches are welcome to the above address
 
 =head1 Copyright
 
-Copyright (c) 2019 MacGyveR. All rights reserved.
+Copyright (c) 2020 MacGyveR. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
